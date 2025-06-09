@@ -9,7 +9,7 @@ class App{
         $url = $this->parseURL();
 
         //controller
-        if(file_exists('../app/controllers/'. $url[0] . '.php')){
+        if(isset($url[0]) && file_exists('../app/controllers/'. $url[0] . '.php')){
             $this->controller = $url[0];
             unset($url[0]);
         }
@@ -38,5 +38,6 @@ class App{
             $url = explode('/', $url);
             return $url;
         }
+        return [];
     }
 }

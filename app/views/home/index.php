@@ -9,7 +9,7 @@
         </div>
 
         <!-- Search bar -->
-        <div class="w-1/2 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:w-1/2 w-auto max-w-xs">
+        <div class=" sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:w-1/2 w-auto max-w-xs">
             <input type="text" placeholder="Input field untuk lokasi"
                 class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-white text-sm">
         </div>
