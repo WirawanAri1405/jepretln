@@ -1,0 +1,30 @@
+body {
+        overflow-x: hidden;
+    }
+
+     .sidebar.collapsed .sidebar-label {
+        opacity: 0;
+        max-width: 0;
+        margin-left: 0;
+        padding: 0;
+    }
+
+     .sidebar .sidebar-label {
+        opacity: 1;
+        max-width: 200px;
+        transition: all 0.3s ease;
+    }
+
+     /* Tooltip hanya muncul kalau sidebar dalam keadaan collapsed */
+    .sidebar.collapsed .group:hover .tooltip {
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+     .tooltip {
+        display: none;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+    }
