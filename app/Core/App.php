@@ -25,6 +25,10 @@ class App
             require_once $controllerPath;
             $this->controller = $url[0];
             unset($url[0]);
+        } else {
+            // default
+            require_once "../app/controllers/Home.php";
+            $this->controller = 'Home';
         }
 
         // Inisialisasi objek controller
