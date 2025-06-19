@@ -9,7 +9,9 @@ class ManajemenPengguna extends Controller
         $this->view('admin/templates/sidebar');
         $this->view('admin/templates/navbar');
         $this->view('admin/manajemenPengguna/index');
-        $this->view('admin/manajemenPengguna/form_modal');
         $this->view('admin/templates/footer');
     }
+   public function detail(){
+    echo 'About/page';
+   }
 }

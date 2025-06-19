@@ -15,7 +15,7 @@
                                  <path clip-rule="evenodd" fill-rule="evenodd"
                                      d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                              </svg>
-                             Add product
+                             Add location
                          </button>
                          <div class="flex items-center space-x-3 w-full md:w-auto">
                              <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown"
@@ -57,10 +57,9 @@
                          <thead
                              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                              <tr>
-                                 <th scope="col" class="px-4 py-3">ID Pesanan</th>
-                                 <th scope="col" class="px-4 py-3">Jumlah</th>
-                                 <th scope="col" class="px-4 py-3">Metode Pembayaran</th>
-                                 <th scope="col" class="px-4 py-3">Tanggal Pembayaran</th>
+                                 <th scope="col" class="px-4 py-3">ID Cabang</th>
+                                 <th scope="col" class="px-4 py-3">Nama</th>
+                                 <th scope="col" class="px-4 py-3">Alamat</th>
                                  <th scope="col" class="px-4 py-3">Status</th>
                                  <th scope="col" class="px-4 py-3">
                                      <span class="sr-only">Actions</span>
@@ -72,10 +71,9 @@
                                  <th scope="row"
                                      class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                      5595</th>
-                                 <td class="px-4 py-3">Rp 500.000</td>
-                                 <td class="px-4 py-3">Cash</td>
-                                 <td class="px-4 py-3">15/06/2025</td>
-                                 <td class="px-4 py-3">pending</td>
+                                 <td class="px-4 py-3">Jepretln Concat</td>
+                                 <td class=" px-4 py-3 "> Ngringin,Condongcatur, Kec.Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta</td>
+                                 <td class="px-4 py-3">tutup</td>
                                  <td class="px-4 py-3 flex items-center justify-end">
                                      <button id="apple-imac-27-dropdown-button"
                                          data-dropdown-toggle="apple-imac-27-dropdown"

@@ -142,7 +142,7 @@
                 </div>
                                 <div class="relative group">
                     <a href="<?= BASEURL; ?>/Admin/LaporanKinerja" class="flex items-center gap-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded">
-                        <i class="bi bi-building"></i>
+                        <i class="bi bi-bar-chart-line"></i>
                         <span
                             class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Laporan Kinerja</span>
                     </a>
