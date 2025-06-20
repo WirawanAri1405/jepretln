@@ -7,7 +7,7 @@
 
                      <div
                          class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                         
+
                          <div class="flex items-center space-x-3 w-full md:w-auto">
                              <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown"
                                  class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -85,11 +85,11 @@
                                          <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
                                              aria-labelledby="apple-imac-27-dropdown-button">
                                              <li>
-                                                 <a href="<?= BASEURL; ?>/Admin/ManajemenPengguna/detail"
+                                                 <a href="#"
                                                      class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
                                              </li>
                                              <li>
-                                                 <a href="#"
+                                                 <a href="<?= BASEURL; ?>/Admin/ManajemenPengguna/edit"
                                                      class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                              </li>
                                          </ul>
