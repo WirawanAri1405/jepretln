@@ -35,137 +35,161 @@
                                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                                  </svg>
                              </button>
-                             <div id="filterDropdown"
-                                 class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
-                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Choose
-                                     brand</h6>
-                                 <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
-                                     <li class="flex items-center">
-                                         <input id="apple" type="checkbox" value=""
-                                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                         <label for="apple"
-                                             class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">admin(1)</label>
-                                     </li>
-                                     </li>
-                                 </ul>
-                             </div>
+                            <form id="filterForm" action="" method="GET">
+                             <input type="hidden" name="search" value="<?= htmlspecialchars($data['search_term'] ?? '') ?>">
+                            <div id="filterDropdown" class="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
+                                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Filter berdasarkan Status</h6>
+                                <ul class="space-y-2 text-sm mb-4" aria-labelledby="filterDropdownButton">
+                                    <li class="flex items-center">
+                                        <input id="status-semua" type="radio" name="statusFilter" value="semua" class="w-4 h-4" <?= ($data['status_aktif'] == 'semua') ? 'checked' : ''; ?>>
+                                        <label for="status-semua" class="ml-2 text-sm font-medium">Semua</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="status-aktif" type="radio" name="statusFilter" value="aktif" class="w-4 h-4" <?= ($data['status_aktif'] == 'aktif') ? 'checked' : ''; ?>>
+                                        <label for="status-aktif" class="ml-2 text-sm font-medium">Aktif</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="status-expired" type="radio" name="statusFilter" value="expired" class="w-4 h-4" <?= ($data['status_aktif'] == 'expired') ? 'checked' : ''; ?>>
+                                        <label for="status-expired" class="ml-2 text-sm font-medium">Expired</label>
+                                    </li>
+                                </ul>
+                                <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                    Terapkan Filter
+                                </button>
+                            </div>
+                        </form>
                          </div>
                      </div>
                  </div>
-                 <div class="overflow-x-auto ">
-                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                         <thead
-                             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                             <tr>
-                                 <th scope="col" class="px-4 py-3">kode</th>
-                                 <th scope="col" class="px-4 py-3">Deskripsi</th>
-                                 <th scope="col" class="px-4 py-3">jumlah diskon</th>
-                                 <th scope="col" class="px-4 py-3">tanggal exp</th>
-                                 <th scope="col" class="px-4 py-3">Status</th>
-                                 <th scope="col" class="px-4 py-3">
-                                     <span class="sr-only">Actions</span>
-                                 </th>
-                             </tr>
-                         </thead>
-                         <tbody>
-                             <tr class="border-b dark:border-gray-700 ">
-                                 <th scope="row"
-                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                     5595</th>
-                                 <td class="px-4 py-3">Diskon Mahasiswa</td>
-                                 <td class="px-4 py-3">25%</td>
-                                 <td class="px-4 py-3">15/06/2025</td>
-                                 <td class="px-4 py-3">expayerd</td>
-                                 <td class="px-4 py-3 flex items-center justify-end">
-                                     <button id="apple-imac-27-dropdown-button"
-                                         data-dropdown-toggle="apple-imac-27-dropdown"
-                                         class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
-                                         type="button">
-                                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor"
-                                             viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                             <path
-                                                 d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                         </svg>
-                                     </button>
-                                     <div id="apple-imac-27-dropdown"
-                                         class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                                         <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                                             aria-labelledby="apple-imac-27-dropdown-button">
-                                             <li>
-                                                 <a href="#"
-                                                     class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
-                                             </li>
-                                             <li>
-                                                 <a href="#"
-                                                     class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                                             </li>
-                                         </ul>
-                                         <div class="py-1">
-                                             <a href="#"
-                                                 class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
-                                         </div>
-                                     </div>
-                                 </td>
-                             </tr>
-                         </tbody>
-                     </table>
+                 <div class="mx-5">
+                     <?php Flasher::flash(); ?>
                  </div>
-                 <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4 my-6"
-                     aria-label="Table navigation">
-                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                         Showing
-                         <span class="font-semibold text-gray-900 dark:text-white">1-10</span>
-                         of
-                         <span class="font-semibold text-gray-900 dark:text-white">1000</span>
-                     </span>
-                     <ul class="inline-flex items-stretch -space-x-px">
-                         <li>
-                             <a href="#"
-                                 class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                 <span class="sr-only">Previous</span>
-                                 <svg class="w-5 h-5" aria-hidden="true" fill="currentColor"
-                                     viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                     <path fill-rule="evenodd"
-                                         d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                         clip-rule="evenodd" />
-                                 </svg>
-                             </a>
-                         </li>
-                         <li>
-                             <a href="#"
-                                 class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-                         </li>
-                         <li>
-                             <a href="#"
-                                 class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-                         </li>
-                         <li>
-                             <a href="#" aria-current="page"
-                                 class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                         </li>
-                         <li>
-                             <a href="#"
-                                 class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">...</a>
-                         </li>
-                         <li>
-                             <a href="#"
-                                 class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">100</a>
-                         </li>
-                         <li>
-                             <a href="#"
-                                 class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                 <span class="sr-only">Next</span>
-                                 <svg class="w-5 h-5" aria-hidden="true" fill="currentColor"
-                                     viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                     <path fill-rule="evenodd"
-                                         d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                         clip-rule="evenodd" />
-                                 </svg>
-                             </a>
-                         </li>
-                     </ul>
-                 </nav>
-             </div>
+                 <div class="overflow-x-auto ">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">Kode Kupon</th>
+                                <th scope="col" class="px-4 py-3">Tipe Diskon</th>
+                                <th scope="col" class="px-4 py-3">Jumlah Diskon</th>
+                                <th scope="col" class="px-4 py-3">Tanggal Exp</th>
+                                <th scope="col" class="px-4 py-3">Status</th>
+                                <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($data['coupons'])) : ?>
+                                <tr class="border-b dark:border-gray-700">
+                                    <td colspan="6" class="px-4 py-3 text-center">Tidak ada data kupon ditemukan.</td>
+                                </tr>
+                            <?php else : ?>
+                                <?php foreach ($data['coupons'] as $kupon) : ?>
+                                    <tr class="border-b dark:border-gray-700">
+                                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <?= htmlspecialchars($kupon['code']); ?>
+                                        </th>
+                                        <td class="px-4 py-3"><?= ucfirst(htmlspecialchars($kupon['discount_type'])); ?></td>
+                                        <td class="px-4 py-3">
+                                            <?php
+                                                if ($kupon['discount_type'] == 'percentage') {
+                                                    echo htmlspecialchars($kupon['value']) . '%';
+                                                } else {
+                                                    echo 'Rp ' . number_format($kupon['value'], 0, ',', '.');
+                                                }
+                                            ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <?= date('d/m/Y', strtotime($kupon['expiry_date'])); ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <?php
+                                                $today = date('Y-m-d');
+                                                $isExpired = $kupon['expiry_date'] < $today;
+                                                
+                                                if ($isExpired) {
+                                                    echo '<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Expired</span>';
+                                                }
+                                                 else {
+                                                    echo '<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Active</span>';
+                                                }
+                                            ?>
+                                        </td>
+                                        <td class="px-4 py-3 flex items-center justify-end">
+                                            <button id="kupon-dropdown-button-<?= $kupon['id']; ?>" data-dropdown-toggle="kupon-dropdown-<?= $kupon['id']; ?>" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
+                                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
+                                            </button>
+                                            <div id="kupon-dropdown-<?= $kupon['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                                <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="kupon-dropdown-button-<?= $kupon['id']; ?>">
+                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKupon/detail/<?= $kupon['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Show</a></li>
+                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKupon/edit/<?= $kupon['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Edit</a></li>
+                                                </ul>
+                                                <div class="py-1">
+                                                    <a href="<?= BASEURL; ?>/Admin/ManajemenKupon/hapus/<?= $kupon['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                 </div> <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                        Showing
+                        <span class="font-semibold text-gray-900 dark:text-white"><?= $data['showing_from'] ?>-<?= $data['showing_to'] ?></span>
+                        of
+                        <span class="font-semibold text-gray-900 dark:text-white"><?= $data['total_results'] ?></span>
+                    </span>
+                    
+                    <?php
+                        // Bangun query string agar pencarian tidak hilang saat berpindah halaman
+                        $queryParams = [];
+                        if (!empty($data['search_term'])) {
+                            $queryParams['search'] = $data['search_term'];
+                        }
+                    ?>
+
+                    <ul class="inline-flex items-stretch -space-x-px">
+                        <li>
+                            <?php
+                                $prevPageParams = $queryParams;
+                                $prevPageParams['page'] = $data['current_page'] - 1;
+                                $prevHref = ($data['current_page'] > 1) ? BASEURL . '/Admin/ManajemenKupon?' . http_build_query($prevPageParams) : '#';
+                            ?>
+                            <a href="<?= $prevHref ?>"
+                                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] <= 1) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
+                                <span class="sr-only">Previous</span>
+                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            </a>
+                        </li>
+
+                        <?php for ($i = 1; $i <= $data['total_pages']; $i++) : ?>
+                        <li>
+                            <?php
+                                $pageParams = $queryParams;
+                                $pageParams['page'] = $i;
+                                $pageHref = BASEURL . '/Admin/ManajemenKupon?' . http_build_query($pageParams);
+                            ?>
+                            <a href="<?= $pageHref ?>"
+                                class="flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:border-gray-700 <?= ($i == $data['current_page']) ? 'z-10 text-blue-600  dark:text-white' : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
+                                <?= $i; ?>
+                            </a>
+                        </li>
+                        <?php endfor; ?>
+
+                        <li>
+                            <?php
+                                $nextPageParams = $queryParams;
+                                $nextPageParams['page'] = $data['current_page'] + 1;
+                                $nextHref = ($data['current_page'] < $data['total_pages']) ? BASEURL . '/Admin/ManajemenKupon?' . http_build_query($nextPageParams) : '#';
+                            ?>
+                            <a href="<?= $nextHref ?>"
+                                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] >= $data['total_pages']) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
+                                <span class="sr-only">Next</span>
+                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
          </div>
      </section>
  </main>
