@@ -66,6 +66,9 @@
 
                                                                      <!-- Tombol -->
                                                                      <div class="flex justify-end space-x-3 pt-4">
+                                                                         <a href="<?= BASEURL; ?>/Admin/ManajemenPengguna" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm">
+                                                                             ← Kembali
+                                                                         </a>
                                                                          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">Simpan</button>
                                                                          <button type="button" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 text-sm">Batal</button>
                                                                      </div>

@@ -20,4 +20,13 @@ class ManajemenPengguna extends Controller
         $this->view('admin/manajemenPengguna/edit');
         $this->view('admin/templates/footer');
     }
+    public function detail()
+    {
+        $data['judul'] = 'Dasboard';
+        $this->view('admin/templates/header');
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenPengguna/detail');
+        $this->view('admin/templates/footer');
+    }
 }

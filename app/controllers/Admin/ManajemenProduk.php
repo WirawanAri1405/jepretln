@@ -21,4 +21,13 @@ class ManajemenProduk extends Controller
         $this->view('admin/manajemenProduk/edit');
         $this->view('admin/templates/footer');
     }
+    public function detail()
+    {
+        $data['judul'] = 'Dasboard';
+        $this->view('admin/templates/header');
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenProduk/detail');
+        $this->view('admin/templates/footer');
+    }
 }

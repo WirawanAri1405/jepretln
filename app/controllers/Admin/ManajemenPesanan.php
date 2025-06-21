@@ -21,4 +21,13 @@ class ManajemenPesanan extends Controller
         $this->view('admin/manajemenPesanan/detail');
         $this->view('admin/templates/footer');
     }
+    public function edit()
+    {
+        $data['judul'] = 'Dasboard';
+        $this->view('admin/templates/header');
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenPesanan/edit');
+        $this->view('admin/templates/footer');
+    }
 }

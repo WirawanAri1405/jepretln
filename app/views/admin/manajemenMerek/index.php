@@ -88,11 +88,11 @@
                                          <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
                                              aria-labelledby="apple-imac-27-dropdown-button">
                                              <li>
-                                                 <a href="#"
+                                                 <a href="<?= BASEURL; ?>/Admin/ManajemenMerek/detail"
                                                      class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
                                              </li>
                                              <li>
-                                                 <a href="#"
+                                                 <a href="<?= BASEURL; ?>/Admin/ManajemenMerek/edit"
                                                      class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                              </li>
                                          </ul>
