@@ -26,5 +26,13 @@
   },
   "keywords": [],
   "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WirawanAri1405/jepretln.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WirawanAri1405/jepretln/issues"
+  },
+  "homepage": "https://github.com/WirawanAri1405/jepretln#readme",
   "description": ""
 }
