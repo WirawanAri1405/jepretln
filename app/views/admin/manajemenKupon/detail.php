@@ -26,6 +26,9 @@
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
                 Tanggal Exp : <span class="font-semibold text-gray-900 dark:text-white"><?= date('d F Y', strtotime($data['kupon']['expiry_date'])); ?></span>
             </p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                Deskripsi : <span class="font-semibold text-gray-900 dark:text-white"><?= htmlspecialchars($data['kupon']['description']); ?></span>
+            </p>
 
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
                 Status : 

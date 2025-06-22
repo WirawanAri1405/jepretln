@@ -87,7 +87,7 @@
                                                 $statusText = ($lokasi['is_active'] == 1) ? 'Buka' : 'Tutup';
                                                 $statusClass = ($lokasi['is_active'] == 1) ? 'text-green-700 bg-green-100 dark:bg-green-700 dark:text-green-100' : 'text-red-700 bg-red-100 dark:bg-red-700 dark:text-red-100';
                                                 ?>
-                                             <span class="px-2 py-1 font-semibold leading-tight rounded-full <?= $statusClass; ?>">
+                                             <span class="px-2 py-1 text-xs font-medium rounded <?= $statusClass; ?>">
                                                  <?= $statusText; ?>
                                              </span>
                                          </td>
