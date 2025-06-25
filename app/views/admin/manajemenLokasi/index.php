@@ -2,8 +2,7 @@
      <section>
          <div class="max-w-screen-xl">
              <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg">
-                 <div
-                     class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                      <div
                          class="flex items-center space-x-3 w-full md:w-auto">
                          <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"

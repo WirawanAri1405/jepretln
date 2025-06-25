@@ -8,8 +8,6 @@ class ManajemenLokasi extends Controller
         // Ambil model
         $lokasi_model = $this->model('Lokasi_model');
 
-          $lokasi_model = $this->model('Lokasi_model');
-
         // Ambil parameter filter dan pencarian dari URL
         $status_filter = $_GET['statusFilter'] ?? 'Semua';
         $search_term = $_GET['search'] ?? null;
@@ -39,7 +37,8 @@ class ManajemenLokasi extends Controller
         $data['total_results'] = $total_results;
         $data['showing_from'] = ($total_results > 0) ? $offset + 1 : 0;
         $data['showing_to'] = min($offset + $results_per_page, $total_results);
-        $this->view('admin/templates/header');
+        $data['judul'] = 'manajemen lokasi';
+        $this->view('admin/templates/header',$data);
         $this->view('admin/templates/sidebar');
         $this->view('admin/templates/navbar',$data);
         $this->view('admin/manajemenLokasi/index', $data);
