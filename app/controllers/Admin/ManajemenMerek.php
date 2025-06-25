@@ -2,7 +2,7 @@
 
 class ManajemenMerek extends Controller
 {
-   // Menampilkan halaman utama dengan daftar merek
+    // Menampilkan halaman utama dengan daftar merek
     public function index()
     {
         $data['judul'] = 'Manajemen Merek';
@@ -12,11 +12,11 @@ class ManajemenMerek extends Controller
         $data['search_action'] = BASEURL . '/Admin/ManajemenMerek';
         $data['search_placeholder'] = 'Cari nama atau slug merek...';
         $data['search_term'] = $search_term;
-        
+
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $results_per_page = 10;
         $offset = ($page - 1) * $results_per_page;
-        
+
         $total_results = $merek_model->countAllMerek($search_term);
         $total_pages = ceil($total_results / $results_per_page);
         $data['merek'] = $merek_model->getAllMerek($search_term, $results_per_page, $offset);
@@ -79,7 +79,7 @@ class ManajemenMerek extends Controller
     {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
         $data = ['id' => $_POST['id'], 'name' => $_POST['name'], 'slug' => $slug];
-        
+
         if ($this->model('Merek_model')->updateDataMerek($data) > 0) {
             Flasher::setFlash('Merek', 'berhasil diubah', 'success');
         } else {
@@ -88,13 +88,18 @@ class ManajemenMerek extends Controller
         header('Location: ' . BASEURL . '/Admin/ManajemenMerek');
         exit;
     }
-    public function detail()
+    // Ganti method detail() yang kosong dengan ini
+    public function detail($id)
     {
-        $data['judul'] = 'Dasboard';
-        $this->view('admin/templates/header');
-        $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar');
-        $this->view('admin/manajemenMerek/detail');
+        $data['judul'] = 'Detail Merek';
+        // Panggil model untuk mengambil data merek berdasarkan ID
+        $data['merek'] = $this->model('Merek_model')->getMerekById($id);
+
+        // Muat semua view yang diperlukan
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar', $data);
+        $this->view('admin/templates/navbar', $data);
+        $this->view('admin/manajemenMerek/detail', $data);
         $this->view('admin/templates/footer');
     }
 }

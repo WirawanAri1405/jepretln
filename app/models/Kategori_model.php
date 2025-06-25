@@ -30,7 +30,7 @@ class Kategori_model
         $bindings = [];
         $whereClause = $this->buildWhereClause($searchTerm, $bindings);
         $query = "SELECT COUNT(*) as total FROM " . $this->table . $whereClause;
-        
+
         $this->db->query($query);
         foreach ($bindings as $key => $param) {
             $this->db->bind($key, $param['value'], $param['type']);
@@ -39,7 +39,7 @@ class Kategori_model
         $result = $this->db->single();
         return $result['total'];
     }
-    
+
     public function getAllKategori($searchTerm = null, $limit = 10, $offset = 0)
     {
         $bindings = [];
@@ -57,7 +57,7 @@ class Kategori_model
 
         return $this->db->resultSet();
     }
-    
+
     // Nanti kita tambahkan fungsi tambah, edit, hapus, detail di sini
     public function tambahDataKategori($data)
     {
@@ -71,7 +71,7 @@ class Kategori_model
 
         return $this->db->rowCount();
     }
-     public function hapusDataKategori($id)
+    public function hapusDataKategori($id)
     {
         $query = "DELETE FROM " . $this->table . " WHERE id = :id";
         $this->db->query($query);
@@ -79,6 +79,33 @@ class Kategori_model
 
         $this->db->execute();
 
+        return $this->db->rowCount();
+    }
+    // --- FUNGSI BARU UNTUK DETAIL ---
+    public function getKategoriById($id)
+    {
+        $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id = :id');
+        $this->db->bind('id', $id, PDO::PARAM_INT);
+        return $this->db->single();
+    }
+
+    // --- FUNGSI BARU UNTUK EDIT ---
+    public function ubahDataKategori($data)
+    {
+        $query = "UPDATE " . $this->table . " SET
+                    name = :name,
+                    slug = :slug
+                  WHERE id = :id";
+
+        // Buat ulang slug secara otomatis untuk memastikan konsistensi
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['name'])));
+
+        $this->db->query($query);
+        $this->db->bind('id', $data['id'], PDO::PARAM_INT);
+        $this->db->bind('name', $data['name']);
+        $this->db->bind('slug', $slug);
+
+        $this->db->execute();
         return $this->db->rowCount();
     }
 }

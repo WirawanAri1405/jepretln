@@ -14,12 +14,12 @@ class ManajemenKategori extends Controller
         $data['search_action'] = BASEURL . '/Admin/ManajemenKategori';
         $data['search_placeholder'] = 'Cari nama atau slug kategori...';
         $data['search_term'] = $search_term;
-        
+
         // Logika Paginasi
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $results_per_page = 10;
         $offset = ($page - 1) * $results_per_page;
-        
+
         // Ambil total data dan data per halaman dari model
         $total_results = $kategori_model->countAllKategori($search_term);
         $total_pages = ceil($total_results / $results_per_page);
@@ -44,7 +44,7 @@ class ManajemenKategori extends Controller
     {
         // Membuat slug secara otomatis dari nama kategori
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
-        
+
         // Menambahkan slug ke dalam data yang akan dikirim ke model
         $data = [
             'name' => $_POST['name'],
@@ -69,22 +69,43 @@ class ManajemenKategori extends Controller
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
     }
-    public function detail()
+    // --- PERBARUI METHOD DETAIL ---
+    public function detail($id)
     {
-        $data['judul'] = 'Dasboard';
-        $this->view('admin/templates/header');
-        $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar');
-        $this->view('admin/manajemenKategori/detail');
+        $data['judul'] = 'Detail Kategori';
+        $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
+
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar', $data);
+        $this->view('admin/templates/navbar', $data);
+        $this->view('admin/manajemenKategori/detail', $data);
         $this->view('admin/templates/footer');
     }
-    public function edit()
+
+    // --- PERBARUI METHOD EDIT ---
+    public function edit($id)
     {
-        $data['judul'] = 'Dasboard';
-        $this->view('admin/templates/header');
-        $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar');
-        $this->view('admin/manajemenKategori/edit');
+        $data['judul'] = 'Edit Kategori';
+        $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
+
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar', $data);
+        $this->view('admin/templates/navbar', $data);
+        $this->view('admin/manajemenKategori/edit', $data);
         $this->view('admin/templates/footer');
+    }
+
+    // --- METHOD BARU UNTUK PROSES UPDATE ---
+    public function update()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->model('Kategori_model')->ubahDataKategori($_POST) > 0) {
+                Flasher::setFlash('Kategori', 'berhasil diperbarui', 'success');
+            } else {
+                Flasher::setFlash('Kategori', 'gagal diperbarui atau tidak ada perubahan', 'danger');
+            }
+            header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
+            exit;
+        }
     }
 }
