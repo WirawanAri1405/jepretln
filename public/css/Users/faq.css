@@ -1,0 +1,15 @@
+/* CSS untuk animasi akordeon */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+}
+.accordion-content.open {
+    max-height: 500px; /* Cukup besar untuk menampung konten */
+}
+.accordion-icon {
+    transition: transform 0.4s ease-in-out;
+}
+.accordion-icon.rotate-180 {
+    transform: rotate(180deg);
+}
