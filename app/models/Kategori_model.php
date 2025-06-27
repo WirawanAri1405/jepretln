@@ -72,13 +72,7 @@ class Kategori_model
         $this->db->execute();
         return $this->db->rowCount();
     }
-        public function getKategoriById($id)
-    {
-        $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id=:id');
-        $this->db->bind('id', $id);
-        return $this->db->single();
-    }
-
+   
     public function updateDataKategori($data)
     {
         // Tambahkan kolom spec_template di query
