@@ -125,7 +125,7 @@ class ManajemenKategori extends Controller
         if ($this->model('Kategori_model')->hapusDataKategori($id) > 0) {
             Flasher::setFlash('Data Kategori', 'berhasil dihapus', 'success');
         } else {
-            Flasher::setFlash('Data Kategori', 'gagal dihapus', 'danger');
+            Flasher::setFlash('Data kategori', 'gagal dihapus', 'danger');
         }
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
