@@ -123,6 +123,14 @@ class ManajemenKategori extends Controller
         $this->view('admin/manajemenKategori/detail', $data);
         $this->view('admin/templates/footer');
     }
-
-
+         public function hapus($id)
+    {
+        if ($this->model('Kategori_model')->hapusDataKategori($id) > 0) {
+            Flasher::setFlash('Data Kategori', 'berhasil dihapus', 'success');
+        } else {
+            Flasher::setFlash('Data kategori', 'gagal dihapus', 'danger');
+        }
+        header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
+        exit;
+    }
 }
