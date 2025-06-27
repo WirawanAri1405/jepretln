@@ -15,12 +15,12 @@ class ManajemenKategori extends Controller
         $data['search_action'] = BASEURL . '/Admin/ManajemenKategori';
         $data['search_placeholder'] = 'Cari nama atau slug kategori...';
         $data['search_term'] = $search_term;
-
+        
         // Logika Paginasi
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $results_per_page = 10;
         $offset = ($page - 1) * $results_per_page;
-
+        
         // Ambil total data dan data per halaman dari model
         $total_results = $kategori_model->countAllKategori($search_term);
         $total_pages = ceil($total_results / $results_per_page);
@@ -57,15 +57,34 @@ class ManajemenKategori extends Controller
         return json_encode(['fields' => $fields]);
     }
 
+    /**
+     * Fungsi helper untuk mengubah array keys dan values menjadi format JSON
+     */
+    private function buildSpecJson($keys, $values)
+    {
+        $fields = [];
+        if (!empty($keys) && count($keys) === count($values)) {
+            for ($i = 0; $i < count($keys); $i++) {
+                if (!empty(trim($keys[$i])) && !empty(trim($values[$i]))) {
+                    $fields[trim($keys[$i])] = trim($values[$i]);
+                }
+            }
+        }
+        return json_encode(['fields' => $fields]);
+    }
+
     public function tambah()
     {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
           $specTemplateJson = $this->buildSpecJson($_POST['spec_keys'] ?? [], $_POST['spec_values'] ?? []);
-        
-        // Menambahkan slug ke dalam data yang akan dikirim ke model
+                
+        // Gunakan fungsi helper untuk merakit JSON
+        $specTemplateJson = $this->buildSpecJson($_POST['spec_keys'] ?? [], $_POST['spec_values'] ?? []);
+
         $data = [
             'name' => $_POST['name'],
             'slug' => $slug,
+            'spec_template' => $specTemplateJson,
             'spec_template' => $specTemplateJson
         ];
 

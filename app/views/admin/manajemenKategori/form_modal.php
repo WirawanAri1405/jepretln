@@ -23,7 +23,19 @@
                         <label for="name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Kategori</label>
                         <input type="text" name="name" id="name" autocomplete="off"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Contoh: Kamera Mirrorless" required>
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            placeholder="Contoh: Kamera Mirrorless" required>
+                    </div>
+
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2 border-t pt-4">Template Spesifikasi</h3>
+                        
+                        <div id="spec-fields-container-modal" class="space-y-3">
+                            </div>
+
+                        <button type="button" id="add-spec-field-modal" class="mt-4 text-sm text-blue-600 hover:text-blue-800">
+                            + Tambah Spesifikasi Baru
+                        </button>
                     </div>
 
                     <div>
