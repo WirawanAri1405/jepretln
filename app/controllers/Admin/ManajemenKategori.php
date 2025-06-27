@@ -2,6 +2,7 @@
 
 class ManajemenKategori extends Controller
 {
+    // ... (metode index, hapus, edit yang sudah ada) ...
     public function index()
     {
         $data['judul'] = 'Manajemen Kategori';
@@ -40,15 +41,33 @@ class ManajemenKategori extends Controller
         $this->view('admin/manajemenKategori/form_modal', $data);
         $this->view('admin/templates/footer');
     }
+    /**
+     * Fungsi helper untuk mengubah array keys dan values menjadi format JSON
+     */
+    private function buildSpecJson($keys, $values)
+    {
+        $fields = [];
+        if (!empty($keys) && count($keys) === count($values)) {
+            for ($i = 0; $i < count($keys); $i++) {
+                if (!empty(trim($keys[$i])) && !empty(trim($values[$i]))) {
+                    $fields[trim($keys[$i])] = trim($values[$i]);
+                }
+            }
+        }
+        return json_encode(['fields' => $fields]);
+    }
+
     public function tambah()
     {
-        // Membuat slug secara otomatis dari nama kategori
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
         
-        // Menambahkan slug ke dalam data yang akan dikirim ke model
+        // Gunakan fungsi helper untuk merakit JSON
+        $specTemplateJson = $this->buildSpecJson($_POST['spec_keys'] ?? [], $_POST['spec_values'] ?? []);
+
         $data = [
             'name' => $_POST['name'],
-            'slug' => $slug
+            'slug' => $slug,
+            'spec_template' => $specTemplateJson
         ];
 
         if ($this->model('Kategori_model')->tambahDataKategori($data) > 0) {
@@ -59,32 +78,56 @@ class ManajemenKategori extends Controller
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
     }
-    public function hapus($id)
+
+   public function edit($id)
     {
-        if ($this->model('Kategori_model')->hapusDataKategori($id) > 0) {
-            Flasher::setFlash('Kategori', 'berhasil dihapus', 'success');
+        $data['judul'] = 'Edit Kategori';
+        $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
+        
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenKategori/edit', $data);
+        $this->view('admin/templates/footer');
+    }
+
+    public function update()
+    {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
+        
+        $specTemplateJson = $this->buildSpecJson($_POST['spec_keys'] ?? [], $_POST['spec_values'] ?? []);
+        
+        $data = [
+            'id' => $_POST['id'],
+            'name' => $_POST['name'],
+            'slug' => $slug,
+            'spec_template' => $specTemplateJson
+        ];
+        
+        if ($this->model('Kategori_model')->updateDataKategori($data) > 0) {
+            Flasher::setFlash('Kategori', 'berhasil diubah', 'success');
         } else {
-            Flasher::setFlash('Kategori', 'gagal dihapus', 'danger');
+            Flasher::setFlash('Kategori', 'tidak ada perubahan data', 'info');
         }
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
     }
-    public function detail()
+        public function detail($id)
     {
-        $data['judul'] = 'Dasboard';
-        $this->view('admin/templates/header');
-        $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar');
-        $this->view('admin/manajemenKategori/detail');
+        $data['judul'] = 'Detail Kategori';
+        $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/manajemenKategori/detail', $data);
         $this->view('admin/templates/footer');
     }
-    public function edit()
+         public function hapus($id)
     {
-        $data['judul'] = 'Dasboard';
-        $this->view('admin/templates/header');
-        $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar');
-        $this->view('admin/manajemenKategori/edit');
-        $this->view('admin/templates/footer');
+        if ($this->model('Kategori_model')->hapusDataKategori($id) > 0) {
+            Flasher::setFlash('Data Kategori', 'berhasil dihapus', 'success');
+        } else {
+            Flasher::setFlash('Data Kategori', 'gagal dihapus', 'danger');
+        }
+        header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
+        exit;
     }
 }

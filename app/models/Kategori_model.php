@@ -61,14 +61,36 @@ class Kategori_model
     // Nanti kita tambahkan fungsi tambah, edit, hapus, detail di sini
     public function tambahDataKategori($data)
     {
-        $query = "INSERT INTO categories (name, slug) VALUES (:name, :slug)";
+        // Tambahkan kolom spec_template di query
+        $query = "INSERT INTO categories (name, slug, spec_template) VALUES (:name, :slug, :spec_template)";
 
         $this->db->query($query);
         $this->db->bind('name', $data['name']);
         $this->db->bind('slug', $data['slug']);
+        $this->db->bind('spec_template', $data['spec_template']); // Bind data JSON
 
         $this->db->execute();
+        return $this->db->rowCount();
+    }
+        public function getKategoriById($id)
+    {
+        $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id=:id');
+        $this->db->bind('id', $id);
+        return $this->db->single();
+    }
 
+    public function updateDataKategori($data)
+    {
+        // Tambahkan kolom spec_template di query
+        $query = "UPDATE categories SET name = :name, slug = :slug, spec_template = :spec_template WHERE id = :id";
+    
+        $this->db->query($query);
+        $this->db->bind('id', $data['id']);
+        $this->db->bind('name', $data['name']);
+        $this->db->bind('slug', $data['slug']);
+        $this->db->bind('spec_template', $data['spec_template']); // Bind data JSON
+
+        $this->db->execute();
         return $this->db->rowCount();
     }
      public function hapusDataKategori($id)

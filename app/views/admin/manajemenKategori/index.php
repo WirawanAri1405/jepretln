@@ -48,8 +48,8 @@
                                             </button>
                                             <div id="kategori-dropdown-<?= $kategori['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow">
                                                 <ul class="py-1 text-sm" aria-labelledby="kategori-dropdown-button-<?= $kategori['id']; ?>">
-                                                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-100">Show</a></li>
-                                                    <li><a href="#" class="block py-2 px-4 hover:bg-gray-100">Edit</a></li>
+                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKategori/detail/<?= $kategori['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Show</a></li>
+                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKategori/edit/<?= $kategori['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Edit</a></li>
                                                 </ul>
                                                 <div class="py-1">
                                                     <a href="<?= BASEURL; ?>/Admin/ManajemenKategori/hapus/<?= $kategori['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini? Kategori yang sudah digunakan pada produk mungkin tidak bisa dihapus.');">Delete</a>
