@@ -66,6 +66,7 @@
     --color-white: #ffffff;
     --spacing: 0.25rem;
     --breakpoint-md: 48rem;
+    --breakpoint-lg: 64rem;
     --breakpoint-xl: 80rem;
     --container-xs: 20rem;
     --container-sm: 24rem;
@@ -922,9 +923,6 @@
   .z-50 {
     z-index: 50;
   }
-  .col-span-1 {
-    grid-column: span 1 / span 1;
-  }
   .col-span-2 {
     grid-column: span 2 / span 2;
   }
@@ -966,9 +964,6 @@
   }
   .-my-1\.5 {
     margin-block: calc(var(--spacing) * -1.5);
-  }
-  .-my-4 {
-    margin-block: calc(var(--spacing) * -4);
   }
   .my-6 {
     margin-block: calc(var(--spacing) * 6);
@@ -1350,6 +1345,9 @@
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
   }
+  .mb-5 {
+    margin-bottom: calc(var(--spacing) * 5);
+  }
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
@@ -1421,9 +1419,6 @@
   }
   .flex {
     display: flex;
-  }
-  .flow-root {
-    display: flow-root;
   }
   .grid {
     display: grid;
@@ -1601,9 +1596,6 @@
   .w-16 {
     width: calc(var(--spacing) * 16);
   }
-  .w-40 {
-    width: calc(var(--spacing) * 40);
-  }
   .w-44 {
     width: calc(var(--spacing) * 44);
   }
@@ -1636,6 +1628,9 @@
   }
   .max-w-md {
     max-width: var(--container-md);
+  }
+  .max-w-screen-lg {
+    max-width: var(--breakpoint-lg);
   }
   .max-w-screen-md {
     max-width: var(--breakpoint-md);
@@ -1805,9 +1800,6 @@
   .flex-col {
     flex-direction: column;
   }
-  .content-start {
-    align-content: flex-start;
-  }
   .items-center {
     align-items: center;
   }
@@ -1867,6 +1859,13 @@
       margin-block-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
+  .space-y-4 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
   .space-y-6 {
     :where(& > :not(:last-child)) {
       --tw-space-y-reverse: 0;
@@ -1907,11 +1906,6 @@
   .divide-gray-100 {
     :where(& > :not(:last-child)) {
       border-color: var(--color-gray-100);
-    }
-  }
-  .divide-gray-200 {
-    :where(& > :not(:last-child)) {
-      border-color: var(--color-gray-200);
     }
   }
   .overflow-hidden {
@@ -2116,6 +2110,9 @@
       color: white;
     }
   }
+  .border-black {
+    border-color: var(--color-black);
+  }
   .border-blue-400 {
     border-color: var(--color-blue-400);
   }
@@ -2139,6 +2136,9 @@
   }
   .border-slate-300 {
     border-color: var(--color-slate-300);
+  }
+  .border-white {
+    border-color: var(--color-white);
   }
   .apexcharts-active {
     .apexcharts-canvas .apexcharts-tooltip-series-group& .apexcharts-tooltip-y-group {
@@ -2184,9 +2184,6 @@
   }
   .bg-blue-50 {
     background-color: var(--color-blue-50);
-  }
-  .bg-blue-100 {
-    background-color: var(--color-blue-100);
   }
   .bg-blue-600 {
     background-color: var(--color-blue-600);
@@ -2418,6 +2415,9 @@
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
   }
+  .pt-6 {
+    padding-top: calc(var(--spacing) * 6);
+  }
   .search-filtering-row {
     .datatable-wrapper .datatable-container thead tr& th {
       padding-top: 0;
@@ -2445,9 +2445,6 @@
   }
   .pr-4 {
     padding-right: calc(var(--spacing) * 4);
-  }
-  .pl-3 {
-    padding-left: calc(var(--spacing) * 3);
   }
   .pl-10 {
     padding-left: calc(var(--spacing) * 10);
@@ -2917,6 +2914,13 @@
       }
     }
   }
+  .hover\:text-blue-800 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-blue-800);
+      }
+    }
+  }
   .hover\:text-gray-600 {
     &:hover {
       @media (hover: hover) {
@@ -2942,6 +2946,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-900);
+      }
+    }
+  }
+  .hover\:text-red-700 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-red-700);
       }
     }
   }
@@ -3294,13 +3305,6 @@
       }
     }
   }
-  .dark\:divide-gray-700 {
-    @media (prefers-color-scheme: dark) {
-      :where(& > :not(:last-child)) {
-        border-color: var(--color-gray-700);
-      }
-    }
-  }
   .dark\:border-blue-500 {
     @media (prefers-color-scheme: dark) {
       border-color: var(--color-blue-500);
@@ -3339,6 +3343,11 @@
   .dark\:border-transparent {
     @media (prefers-color-scheme: dark) {
       border-color: transparent;
+    }
+  }
+  .dark\:border-white {
+    @media (prefers-color-scheme: dark) {
+      border-color: var(--color-white);
     }
   }
   .dark\:bg-blue-600 {
