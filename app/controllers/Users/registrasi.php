@@ -13,27 +13,20 @@ class Registrasi extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($_POST['password'] !== $_POST['confirmPassword']) {
                 Flasher::setFlash('gagal', 'Konfirmasi password tidak cocok.', 'danger');
-                header('Location: ' . BASEURL . '/Registrasi');
+                header('Location: ' . BASEURL . '/users/registrasi'); // Benar
                 exit;
             }
 
-            // Panggil model untuk tambah user
-            $hasil = $this->model('User_model')->tambahUser($_POST);
-
-            // Cek apakah model mengembalikan hasil yang valid (bukan false atau 0)
-            if ($hasil) {
-                // Berhasil, arahkan ke halaman sukses
-                header('Location: ' . BASEURL . '/Users/registrasiBerhasil');
+            if ($this->model('User_model')->tambahUser($_POST) > 0) {
+                header('Location: ' . BASEURL . '/users/registrasi/registrasiBerhasil'); // Benar
                 exit;
             } else {
-                // Gagal, kemungkinan email sudah ada
                 Flasher::setFlash('gagal', 'Registrasi gagal. Email mungkin sudah terdaftar.', 'danger');
-                header('Location: ' . BASEURL . '/Users/Registrasi');
+                header('Location: ' . BASEURL . '/users/registrasi'); // Benar
                 exit;
             }
         } else {
-            // Jika bukan POST, tendang kembali
-            header('Location: ' . BASEURL . '/users/Registrasi');
+            header('Location: ' . BASEURL . '/users/registrasi'); // Benar
             exit;
         }
     }
@@ -41,7 +34,7 @@ class Registrasi extends Controller {
     public function registrasiBerhasil() {
         $data['judul'] = 'Registrasi Berhasil';
         $this->view('templates/header', $data);
-        $this->view('users/registrasiBerhasil');
+        $this->view('users/registrasi/registrasiBerhasil');
         $this->view('templates/footer');
     }
 }

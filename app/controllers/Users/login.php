@@ -1,33 +1,47 @@
 <?php
 
 class Login extends Controller {
+
     public function index() {
-        if (isset($_SESSION['login'])) {
-            header('Location: ' . BASEURL . '/users/profile'); // Arahkan ke dashboard jika sudah login
+        // Jika pengguna SUDAH login, jangan tampilkan form login lagi, arahkan ke profil.
+        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+            header('Location: ' . BASEURL . '/Users/profile');
             exit;
         }
-        $data['judul'] = 'Masuk'; 
-        $this->view('users/login/login', $data); // Memuat view dan data
+        
+        $data['judul'] = 'Login';
+        $this->view('templates/header', $data);
+        $this->view('users/login/login', $data);
+        $this->view('templates/footer');
     }
 
     public function prosesLogin() {
-        $user = $this->model('User_model')->checkLogin($_POST);
-        if ($user) {
-            $_SESSION['login'] = true;
-            $_SESSION['user_id'] = $user['id']; 
-            $_SESSION['user_nama'] = $user['name']; // Pastikan nama kolom 'name'
-            header('Location: ' . BASEURL . '/users/profile'); // Arahkan ke dashboard setelah login
-            exit;
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $user = $this->model('User_model')->checkLogin($_POST);
+
+            if ($user) {
+                // Jika login berhasil, buat sesi
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['logged_in'] = true;
+
+                // Arahkan ke controller Profile
+                header('Location: ' . BASEURL . '/Users/profile');
+                exit;
+            } else {
+                Flasher::setFlash('Gagal', 'Email atau Password salah.', 'danger');
+                header('Location: ' . BASEURL . '/Users/login');
+                exit;
+            }
         } else {
-            Flasher::setFlash('Gagal', 'Emai atau Password salah', 'danger');
-            header('Location: ' . BASEURL . '/users/login');
+            header('Location: ' . BASEURL . '/Users/login');
             exit;
         }
     }
 
     public function logout() {
-        session_destroy();
         session_unset();
+        session_destroy();
         header('Location: ' . BASEURL . '/Users/login');
         exit;
     }

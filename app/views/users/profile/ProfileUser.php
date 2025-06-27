@@ -66,7 +66,7 @@
             function logout() {
                 if (confirm("Yakin ingin keluar?")) {
                     // PENYESUAIAN: Link diubah agar sesuai dengan route MVC
-                    window.location.href = "<?= BASEURL; ?>/Users/login";
+                    window.location.href = "<?= BASEURL; ?>/Users/login/logout";
                 }
             }   
         </script>
