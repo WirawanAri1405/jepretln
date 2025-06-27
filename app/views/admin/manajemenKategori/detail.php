@@ -1,26 +1,30 @@
 <main class="p-6">
-    <div class="flex justify-center">
-        <div class="w-full max-w-2xl p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                Detail Kategori
-            </h5>
-            <p class="text-gray-500 dark:text-gray-400 mb-5">Informasi lengkap untuk kategori "<?= htmlspecialchars($data['kategori']['name']); ?>"</p>
+    <section>
+        <div class="max-w-screen-md mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Detail Kategori Produk</h2>
 
-            <hr class="dark:border-gray-600">
+                <!-- ID -->
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">ID Kategori</p>
+                    <p class="font-medium text-gray-900 dark:text-white">5617</p>
+                </div>
 
-            <div class="mt-5 space-y-4">
-                <div>
-                    <p class="font-semibold text-gray-800 dark:text-gray-200">Nama Kategori:</p>
-                    <p class="text-gray-700 dark:text-gray-300"><?= htmlspecialchars($data['kategori']['name']); ?></p>
+                <!-- Nama -->
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Nama Kategori</p>
+                    <p class="font-medium text-gray-900 dark:text-white">Bedi</p>
                 </div>
-                 <div>
-                    <p class="font-semibold text-gray-800 dark:text-gray-200">Slug:</p>
-                    <p class="text-gray-700 dark:text-gray-300"><?= htmlspecialchars($data['kategori']['slug']); ?></p>
+
+                <!-- Slug -->
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Slug (URL)</p>
+                    <p class="font-medium text-gray-900 dark:text-white">bedi-mirrorless</p>
                 </div>
-                <div>
-                    <p class="font-semibold text-gray-800 dark:text-gray-200">Template Spesifikasi (Format JSON):</p>
-                    <pre class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 p-4 rounded-md text-sm overflow-x-auto"><code><?= htmlspecialchars(json_encode(json_decode($data['kategori']['spec_template']), JSON_PRETTY_PRINT)); ?></code></pre>
+                <div class="flex justify-end">
+                    <a href="<?= BASEURL; ?>/Admin/ManajemenMerek" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm">
+                        ← Kembali
+                    </a>
                 </div>
             </div>
 

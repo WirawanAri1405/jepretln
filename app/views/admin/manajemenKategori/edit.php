@@ -1,38 +1,40 @@
 <main class="p-6">
     <section>
-        <div class="max-w-screen-lg mx-auto">
-            <h1 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Edit Kategori</h1>
-            
-            <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg p-6">
-                <form action="<?= BASEURL; ?>/Admin/ManajemenKategori/update" method="post">
-                    <input type="hidden" name="id" value="<?= $data['kategori']['id']; ?>">
-                    
-                    <div class="grid gap-6 mb-6">
-                        <div>
-                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Kategori</label>
-                            <input type="text" name="name" id="name" autocomplete="off"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                                required value="<?= htmlspecialchars($data['kategori']['name']); ?>">
-                        </div>
+        <div class="max-w-screen-md mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Edit Kategori Produk</h2>
 
-                        <div>
-                            <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2 border-t pt-4 mt-4">Template Spesifikasi</h3>
-                            <div id="spec-fields-container" class="space-y-3">
-                                </div>
-                            <button type="button" id="add-spec-field" class="mt-4 text-sm text-blue-600 hover:text-blue-800">
-                                + Tambah Spesifikasi Baru
-                            </button>
-                        </div>
+                <form class="space-y-6" method="POST" action="/admin/kategori/update">
+                    <!-- ID (readonly) -->
+                    <div>
+                        <label for="id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">ID Kategori</label>
+                        <input type="text" id="id" name="id" value="5617" readonly
+                            class="w-full p-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 text-sm cursor-not-allowed" />
                     </div>
 
-                    <div class="flex items-center">
-                        <button type="submit"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Update Kategori
-                        </button>
-                        <a href="<?= BASEURL; ?>/Admin/ManajemenKategori" class="ms-3 py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100">
-                            Batal
+                    <!-- Nama -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Kategori</label>
+                        <input type="text" id="name" name="name" value="Bedi"
+                            class="w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm" />
+                    </div>
+
+                    <!-- Slug -->
+                    <div>
+                        <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Slug (URL)</label>
+                        <input type="text" id="slug" name="slug" value="kamera-mirrorless"
+                            class="w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm" />
+                    </div>
+
+                    <!-- Tombol -->
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <a href="<?= BASEURL; ?>/Admin/ManajemenKategori/" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm">
+                            ← Kembali
                         </a>
+                        <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">Simpan</button>
+                        <button type="button"
+                            class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 text-sm">Batal</button>
                     </div>
                 </form>
             </div>

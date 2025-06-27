@@ -1,19 +1,24 @@
 <main class="p-6">
     <section>
-        <?php Flasher::flash(); ?>
-        <div class="max-w-screen-xl mx-auto">
+        <div class="max-w-screen-xl ">
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg">
                 <div class="flex flex-col md:flex-row items-center justify-between p-4">
-                     <div class="w-full md:w-auto flex justify-end flex-1">
-                         <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button" class="flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100">
-                             <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" /></svg>
-                             Tambah Merek
-                         </button>
-                     </div>
+                    <div class="w-full md:w-auto flex justify-start flex-1">
+                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
+                            class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20">
+                                <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                            </svg>
+                            Tambah Merek
+                        </button>
+                    </div>
+                </div>
+                <div class="mx-5">
+                    <?php Flasher::flash(); ?>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">ID Merek</th>
                                 <th scope="col" class="px-4 py-3">Nama Merek</th>
@@ -23,20 +28,27 @@
                         </thead>
                         <tbody>
                             <?php if (empty($data['merek'])) : ?>
-                                <tr class="border-b"><td colspan="4" class="px-4 py-3 text-center">Tidak ada data ditemukan.</td></tr>
+                                <tr class="border-b dark:border-gray-700">
+                                    <td colspan="4" class="px-4 py-3 text-center">Tidak ada data ditemukan.</td>
+                                </tr>
                             <?php else : ?>
                                 <?php foreach ($data['merek'] as $merek) : ?>
-                                    <tr class="border-b">
+                                    <tr class="border-b dark:border-gray-700">
                                         <th class="px-4 py-3"><?= $merek['id']; ?></th>
                                         <td class="px-4 py-3"><?= htmlspecialchars($merek['name']); ?></td>
                                         <td class="px-4 py-3"><?= htmlspecialchars($merek['slug']); ?></td>
                                         <td class="px-4 py-3 flex items-center justify-end">
                                             <button id="merek-dropdown-button-<?= $merek['id']; ?>" data-dropdown-toggle="merek-dropdown-<?= $merek['id']; ?>" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500" type="button">
-                                                <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
+                                                <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
+                                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                </svg>
                                             </button>
-                                            <div id="merek-dropdown-<?= $merek['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow">
-                                                <ul class="py-1 text-sm"><li_><a href="<?= BASEURL; ?>/Admin/ManajemenMerek/edit/<?= $merek['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Edit</a></li></ul>
-                                                <div class="py-1"><a href="<?= BASEURL; ?>/Admin/ManajemenMerek/hapus/<?= $merek['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" onclick="return confirm('Yakin ingin menghapus merek ini?');">Delete</a></div>
+                                            <div id="merek-dropdown-<?= $merek['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                                <ul class="py-1 text-sm">
+                                                    <li_><a href="<?= BASEURL; ?>/Admin/ManajemenMerek/detail/<?= $merek['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Show</a></li>
+                                                        <li_><a href="<?= BASEURL; ?>/Admin/ManajemenMerek/edit/<?= $merek['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Edit</a></li>
+                                                </ul>
+                                                <div class="py-1"><a href="<?= BASEURL; ?>/Admin/ManajemenMerek/hapus/<?= $merek['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" onclick="return confirm('Yakin ingin menghapus merek ini?');">Delete</a></div>
                                             </div>
                                         </td>
                                     </tr>
@@ -45,7 +57,7 @@
                         </tbody>
                     </table>
                 </div>
-              <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
+                <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
                         Showing
                         <span class="font-semibold text-gray-900 dark:text-white"><?= $data['showing_from'] ?>-<?= $data['showing_to'] ?></span>
