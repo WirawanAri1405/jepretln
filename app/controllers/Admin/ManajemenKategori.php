@@ -41,21 +41,6 @@ class ManajemenKategori extends Controller
         $this->view('admin/manajemenKategori/form_modal', $data);
         $this->view('admin/templates/footer');
     }
-    /**
-     * Fungsi helper untuk mengubah array keys dan values menjadi format JSON
-     */
-    private function buildSpecJson($keys, $values)
-    {
-        $fields = [];
-        if (!empty($keys) && count($keys) === count($values)) {
-            for ($i = 0; $i < count($keys); $i++) {
-                if (!empty(trim($keys[$i])) && !empty(trim($values[$i]))) {
-                    $fields[trim($keys[$i])] = trim($values[$i]);
-                }
-            }
-        }
-        return json_encode(['fields' => $fields]);
-    }
 
     /**
      * Fungsi helper untuk mengubah array keys dan values menjadi format JSON
@@ -130,13 +115,12 @@ class ManajemenKategori extends Controller
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
     }
-    public function detail()
+        public function detail($id)
     {
-        $data['judul'] = 'Dasboard';
-        $this->view('admin/templates/header');
-        $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar');
-        $this->view('admin/manajemenKategori/detail');
+        $data['judul'] = 'Detail Kategori';
+        $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/manajemenKategori/detail', $data);
         $this->view('admin/templates/footer');
     }
 
