@@ -31,6 +31,7 @@ class App{
         
     }
     else{
+        var_dump($url);
         
         require_once '../app/controllers/' . $this->controller . '.php';
     }
