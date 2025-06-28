@@ -117,7 +117,7 @@
                             $prevPageParams = $queryParams;
                             $prevPageParams['page'] = $data['current_page'] - 1;
                             // URL disesuaikan ke ManajemenKategori
-                            $prevHref = ($data['current_page'] > 1) ? BASEURL . '/Admin/ManajemenKategori?' . http_build_query($prevPageParams) : '#';
+                            $prevHref = ($data['current_page'] > 1) ? BASEURL . '/Admin/ManajemenProduk?' . http_build_query($prevPageParams) : '#';
                             ?>
                             <a href="<?= $prevHref ?>"
                                 class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] <= 1) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
