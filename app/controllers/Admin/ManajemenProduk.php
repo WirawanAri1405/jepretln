@@ -112,7 +112,7 @@ class ManajemenProduk extends Controller
             header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
             exit;
         }
-           // Ambil array spesifikasi dari form dan ubah menjadi JSON
+        // Ambil array spesifikasi dari form dan ubah menjadi JSON
         $spesifikasi = $_POST['spesifikasi'] ?? [];
         $spesifikasiJson = json_encode($spesifikasi);
 
@@ -126,7 +126,7 @@ class ManajemenProduk extends Controller
             'stock_quantity' => $_POST['stock_quantity'],
             'description' => $_POST['description'],
             'images' => $uploadedImages, // Array berisi nama-nama file yang berhasil di-upload
-             'specifications' => $spesifikasiJson // Simpan string JSON
+            'specifications' => $spesifikasiJson // Simpan string JSON
         ];
 
         // 4. Panggil model untuk menyimpan data ke database
@@ -140,7 +140,7 @@ class ManajemenProduk extends Controller
         exit;
     }
 
-       public function hapus($id)
+    public function hapus($id)
     {
         $produk_model = $this->model('Product_model');
 
@@ -167,7 +167,7 @@ class ManajemenProduk extends Controller
         } else {
             Flasher::setFlash('Produk', 'gagal dihapus', 'danger');
         }
-        
+
         header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
         exit;
     }
@@ -175,6 +175,7 @@ class ManajemenProduk extends Controller
     // Anda bisa menambahkan method 'detail($id)', 'edit($id)', dan 'update()' di sini
     public function detail($id)
     {
+
         $data['judul'] = 'Detail Produk';
 
         // Panggil fungsi model yang sudah kita kenal
@@ -192,15 +193,17 @@ class ManajemenProduk extends Controller
         $data['product'] = $produk;
 
         $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar', $data);
         $this->view('admin/manajemenProduk/detail', $data);
         $this->view('admin/templates/footer');
     }
 
-     public function edit($id)
+    public function edit($id)
     {
         $data['judul'] = 'Edit Produk';
         $produk_model = $this->model('Product_model');
-        
+
         $data['produk'] = $produk_model->getProdukByIdWithImages($id);
         if (!$data['produk']) {
             Flasher::setFlash('Produk', 'tidak ditemukan', 'danger');
@@ -219,10 +222,10 @@ class ManajemenProduk extends Controller
     }
 
     // Ganti method update lama Anda dengan yang ini
-     public function update()
+    public function update()
     {
         $produk_model = $this->model('Product_model');
-        
+
         // 1. Hapus gambar lama yang ditandai untuk dihapus
         if (isset($_POST['delete_images']) && is_array($_POST['delete_images'])) {
             foreach ($_POST['delete_images'] as $imageId) {
@@ -251,7 +254,7 @@ class ManajemenProduk extends Controller
         } else {
             Flasher::setFlash('Produk', 'gagal diupdate', 'danger');
         }
-        
+
         header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
         exit;
     }
