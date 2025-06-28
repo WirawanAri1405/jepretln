@@ -24,7 +24,7 @@
             </button>
         </form>
         <div class="text-sm text-center mt-4">
-            <a href="login.html" class="text-blue-600 hover:underline">Kembali ke login</a>
+            <a href="<?=BASEURL?>/users/login" class="text-blue-600 hover:underline">Kembali ke login</a>
         </div>
     </div>
 </body>

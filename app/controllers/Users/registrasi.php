@@ -4,9 +4,7 @@ class Registrasi extends Controller {
     
     public function index() {
         $data['judul'] = 'Registrasi';
-        $this->view('templates/header', $data);
         $this->view('users/registrasi/registrasi'); 
-        $this->view('templates/footer');
     }
 
     public function proses() {
@@ -33,8 +31,6 @@ class Registrasi extends Controller {
 
     public function registrasiBerhasil() {
         $data['judul'] = 'Registrasi Berhasil';
-        $this->view('templates/header', $data);
         $this->view('users/registrasi/registrasiBerhasil');
-        $this->view('templates/footer');
     }
 }

@@ -54,7 +54,7 @@
                     </button>
                 </div>
                 <div class="flex justify-end items-center text-sm mb-4">
-                    <a href="#" class="text-blue-600 hover:underline">Lupa Password?</a>
+                    <a href="<?=BASEURL?>/users/gantipassword" class="text-blue-600 hover:underline">Lupa Password?</a>
                 </div>
                 <button type="submit" name="login" class="w-full bg-[#A67C52] hover:bg-[#936D46] text-white font-semibold py-2 rounded">Login</button>
             </form>

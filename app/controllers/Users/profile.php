@@ -20,12 +20,43 @@ class Profile extends Controller {
         }
         
         $data['judul'] = 'Profil Pengguna';
-        $this->view('templates/header', $data);
         $this->view('users/profile/ProfileUser', $data); 
-        $this->view('templates/footer');
     }
 
     public function edit() {
-        // Tambahkan logika untuk halaman edit profil di sini
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            Flasher::setFlash('gagal', 'Anda harus login untuk mengakses halaman ini.', 'danger');
+            header('Location: ' . BASEURL . '/users/login');
+            exit;
+        }
+
+        // Ambil data terbaru dari user untuk ditampilkan di form
+        $data['user'] = $this->model('User_model')->getUserById($_SESSION['user_id']);
+        $data['judul'] = 'Edit Profil';
+
+        // Tampilkan view form edit profil
+        $this->view('users/profile/EditProfile', $data); 
+    }
+
+    public function update() {
+        // Cek apakah ada request POST
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Panggil method di model untuk update data, dan cek hasilnya
+            if ($this->model('User_model')->updateUser($_POST, $_FILES) > 0) {
+                // Jika berhasil, beri pesan sukses dan arahkan kembali ke halaman profil
+                Flasher::setFlash('berhasil', 'Profil berhasil diperbarui.', 'success');
+                header('Location: ' . BASEURL . '/users/profile');
+                exit;
+            } else {
+                // Jika gagal (atau tidak ada data yang berubah), beri pesan
+                Flasher::setFlash('gagal', 'Tidak ada perubahan yang disimpan.', 'info');
+                header('Location: ' . BASEURL . '/users/profile/edit');
+                exit;
+            }
+        } else {
+            // Jika diakses tanpa POST, tendang kembali
+            header('Location: ' . BASEURL . '/users/profile');
+            exit;
+        }
     }
 }
