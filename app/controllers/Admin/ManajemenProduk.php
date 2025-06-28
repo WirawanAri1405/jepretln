@@ -50,13 +50,124 @@ class ManajemenProduk extends Controller
         $this->view('admin/templates/footer');
     }
 
-    public function hapus($id)
+
+    private function uploadMultipleImages()
     {
-        if ($this->model('Product_model')->hapusDataProduk($id) > 0) {
+        // Pastikan ada file yang dikirim
+        if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
+            Flasher::setFlash('Upload Gagal', 'Anda harus memilih setidaknya satu gambar.', 'danger');
+            return false;
+        }
+
+        $uploadedFiles = [];
+        $files = $_FILES['images'];
+        $fileCount = count($files['name']);
+        $uploadPath = dirname(__DIR__, 3) . '/public/assets/produk/';
+
+        // Pastikan direktori tujuan ada, jika tidak, coba buat
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        for ($i = 0; $i < $fileCount; $i++) {
+            if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+                continue; // Lewati jika ada error pada file ini
+            }
+
+            $tmpName = $files['tmp_name'][$i];
+            $namaFile = $files['name'][$i];
+
+            // Validasi Ekstensi
+            $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
+            $ekstensiGambar = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+            if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
+                Flasher::setFlash('Upload Gagal', "Format file '$namaFile' tidak didukung (hanya JPG, JPEG, PNG).", 'danger');
+                return false;
+            }
+
+            // Generate nama unik untuk file
+            $namaFileBaru = uniqid('produk-', true) . '.' . $ekstensiGambar;
+
+            // Pindahkan file ke folder tujuan
+            if (move_uploaded_file($tmpName, $uploadPath . $namaFileBaru)) {
+                $uploadedFiles[] = $namaFileBaru;
+            } else {
+                Flasher::setFlash('Upload Gagal', "Gagal memindahkan file '$namaFile'.", 'danger');
+                return false;
+            }
+        }
+        return $uploadedFiles;
+    }
+
+    /**
+     * Memproses data dari form tambah produk.
+     */
+    public function tambah()
+    {
+        // 1. Proses upload semua gambar
+        $uploadedImages = $this->uploadMultipleImages();
+
+        // 2. Jika upload gagal, hentikan proses dan kembali
+        if ($uploadedImages === false) {
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
+        }
+           // Ambil array spesifikasi dari form dan ubah menjadi JSON
+        $spesifikasi = $_POST['spesifikasi'] ?? [];
+        $spesifikasiJson = json_encode($spesifikasi);
+
+        // 3. Siapkan semua data untuk dikirim ke model
+        $data = [
+            'name' => $_POST['name'],
+            'slug' => strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name']))),
+            'category_id' => $_POST['category_id'],
+            'brand_id' => $_POST['brand_id'],
+            'daily_rental_price' => $_POST['daily_rental_price'],
+            'stock_quantity' => $_POST['stock_quantity'],
+            'description' => $_POST['description'],
+            'images' => $uploadedImages, // Array berisi nama-nama file yang berhasil di-upload
+             'specifications' => $spesifikasiJson // Simpan string JSON
+        ];
+
+        // 4. Panggil model untuk menyimpan data ke database
+        if ($this->model('Product_model')->tambahProduk($data) > 0) {
+            Flasher::setFlash('Produk', 'berhasil ditambahkan', 'success');
+        } else {
+            Flasher::setFlash('Produk', 'gagal ditambahkan ke database', 'danger');
+        }
+
+        header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+        exit;
+    }
+
+       public function hapus($id)
+    {
+        $produk_model = $this->model('Product_model');
+
+        // 1. Ambil semua nama file gambar yang terkait dengan produk ini
+        $gambarProduk = $produk_model->getGambarByProdukId($id);
+
+        // 2. Hapus setiap file gambar dari server
+        if ($gambarProduk) {
+            foreach ($gambarProduk as $gambar) {
+                // Jangan hapus gambar default
+                if ($gambar['image_path'] != 'default.jpg') {
+                    $pathFile = dirname(__DIR__, 3) . '/public/assets/produk/' . $gambar['image_path'];
+                    if (file_exists($pathFile)) {
+                        unlink($pathFile);
+                    }
+                }
+            }
+        }
+
+        // 3. Hapus data produk dari database
+        // (Ini akan otomatis menghapus data di 'product_images' karena ON DELETE CASCADE)
+        if ($produk_model->hapusDataProduk($id) > 0) {
             Flasher::setFlash('Produk', 'berhasil dihapus', 'success');
         } else {
             Flasher::setFlash('Produk', 'gagal dihapus', 'danger');
         }
+        
         header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
         exit;
     }
@@ -65,88 +176,83 @@ class ManajemenProduk extends Controller
     public function detail($id)
     {
         $data['judul'] = 'Detail Produk';
-        $data['product'] = $this->model('Product_model')->getProductById($id);
+
+        // Panggil fungsi model yang sudah kita kenal
+        $produk = $this->model('Product_model')->getProdukByIdWithImages($id);
+
+        // --- PENGECEKAN KUNCI ---
+        // Gunakan '=== false' untuk perbandingan yang lebih akurat
+        if ($produk === false) {
+            Flasher::setFlash('Produk', 'tidak ditemukan dengan ID ' . htmlspecialchars($id), 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
+        }
+
+        // Jika berhasil, kirim data ke view
+        $data['product'] = $produk;
 
         $this->view('admin/templates/header', $data);
-        $this->view('admin/templates/sidebar', $data);
-        $this->view('admin/templates/navbar', $data);
-        $this->view('admin/manajemenProduk/detail', $data); // Memuat view detail
+        $this->view('admin/manajemenProduk/detail', $data);
         $this->view('admin/templates/footer');
     }
 
-    public function edit($id)
+     public function edit($id)
     {
         $data['judul'] = 'Edit Produk';
-        $product_model = $this->model('Product_model');
+        $produk_model = $this->model('Product_model');
+        
+        $data['produk'] = $produk_model->getProdukByIdWithImages($id);
+        if (!$data['produk']) {
+            Flasher::setFlash('Produk', 'tidak ditemukan', 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
+        }
 
-        // Mengambil data spesifik produk untuk di-passing ke form
-        $data['product'] = $product_model->getProductById($id);
-
-        // Mengambil semua kategori dan merek untuk mengisi dropdown
-        $data['categories'] = $product_model->getAllCategories();
-        $data['brands'] = $product_model->getAllBrands();
+        $data['kategori'] = $this->model('Kategori_model')->getAllKategori();
+        $data['merek'] = $this->model('Merek_model')->getAllMerek();
 
         $this->view('admin/templates/header', $data);
-        $this->view('admin/templates/sidebar', $data);
-        $this->view('admin/templates/navbar', $data);
-        $this->view('admin/manajemenProduk/edit', $data); // Memuat view edit
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenProduk/edit', $data);
         $this->view('admin/templates/footer');
     }
 
-    public function tambah()
+    // Ganti method update lama Anda dengan yang ini
+     public function update()
     {
-        // 1. Ambil model dan buat slug terlebih dahulu
-        $product_model = $this->model('Product_model');
-        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
-
-        // 2. Cek apakah slug sudah ada di database
-        if ($product_model->isSlugExists($slug)) {
-            // Jika slug sudah ada, kirim pesan error dan redirect kembali
-            Flasher::setFlash('Produk', 'gagal ditambahkan. Nama produk sudah digunakan (slug duplikat).', 'danger');
-            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
-            exit;
+        $produk_model = $this->model('Product_model');
+        
+        // 1. Hapus gambar lama yang ditandai untuk dihapus
+        if (isset($_POST['delete_images']) && is_array($_POST['delete_images'])) {
+            foreach ($_POST['delete_images'] as $imageId) {
+                $gambar = $produk_model->getGambarById($imageId);
+                if ($gambar) {
+                    unlink(dirname(__DIR__, 3) . '/public/assets/produk/' . $gambar['image_path']);
+                    $produk_model->hapusGambarById($imageId);
+                }
+            }
         }
 
-        // 3. Jika slug unik, baru lanjutkan proses penambahan data
+        // 2. Upload gambar baru jika ada
+        $newImages = [];
+        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+            $newImages = $this->uploadMultipleImages();
+        }
 
-        // Encode spesifikasi (jika ada)
-        if (isset($_POST['specifications']) && is_array($_POST['specifications'])) {
-            $_POST['specifications'] = json_encode($_POST['specifications']);
+        // 3. Rakit data untuk update
+        $_POST['slug'] = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
+        $_POST['specifications'] = json_encode($_POST['spesifikasi'] ?? []);
+        $_POST['new_images'] = $newImages;
+
+        // 4. Panggil model untuk update
+        if ($produk_model->updateDataProduk($_POST) >= 0) { // >= 0 karena bisa jadi tidak ada perubahan
+            Flasher::setFlash('Produk', 'berhasil diupdate', 'success');
         } else {
-            $_POST['specifications'] = null;
+            Flasher::setFlash('Produk', 'gagal diupdate', 'danger');
         }
-
-        // Panggil model untuk menambah data. Kita tidak perlu mengirim slug lagi karena model akan membuatnya sendiri.
-        if ($this->model('Product_model')->tambahDataProduk($_POST) > 0) {
-            Flasher::setFlash('Produk', 'berhasil ditambahkan', 'success');
-        } else {
-            Flasher::setFlash('Produk', 'gagal ditambahkan karena kesalahan teknis.', 'danger');
-        }
-
+        
         header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
         exit;
-    }
-
-    public function update()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            // Cek dan encode data spesifikasi, sama seperti di fungsi tambah()
-            if (isset($_POST['specifications']) && is_array($_POST['specifications'])) {
-                $_POST['specifications'] = json_encode($_POST['specifications']);
-            } else {
-                $_POST['specifications'] = null;
-            }
-
-            $result = $this->model('Product_model')->ubahDataProduk($_POST);
-
-            if ($result > 0) {
-                Flasher::setFlash('Produk', 'berhasil diperbarui', 'success');
-            } else {
-                Flasher::setFlash('Produk', 'tidak ada perubahan data.', 'info');
-            }
-            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
-            exit;
-        }
     }
 }

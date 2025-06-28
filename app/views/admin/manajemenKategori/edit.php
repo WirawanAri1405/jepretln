@@ -4,7 +4,7 @@
             <h1 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Edit Kategori</h1>
 
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg p-6">
-                <form action="<?= BASEURL; ?>/Admin/ManajemenKategori/update" method="post">
+                <form action="<?= BASEURL; ?>/Admin/ManajemenKategori/update" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $data['kategori']['id']; ?>">
 
                     <div class="grid gap-6 mb-6">
@@ -14,28 +14,42 @@
                                 class="mt-1 w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm"
                                 required value="<?= htmlspecialchars($data['kategori']['name']); ?>">
                         </div>
-
-                        <div>
-                            <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2 border-t pt-4 mt-4">Template Spesifikasi</h3>
-                            <div id="spec-fields-container" class="space-y-3">
+                        <label for="image-input" class="block mb-2 text-sm font-medium">Ubah Gambar Kategori</label>
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Gambar Saat Ini:</p>
+                                <img src="<?= BASEURL; ?>/assets/kategori/<?= $data['kategori']['image']; ?>" class="w-24 h-24 object-cover rounded-lg border">
                             </div>
-                            <button type="button" id="add-spec-field" class="mt-4 text-sm text-blue-600 hover:text-blue-800">
-                                + Tambah Spesifikasi Baru
-                            </button>
+                            <div class="flex-1">
+                                <p class="text-xs text-gray-500 mb-1">Pilih Gambar Baru (Opsional):</p>
+                                <input type="file" name="image" id="image-input" class="block w-full text-sm text-gray-900 border ...">
+                                <p class="mt-1 text-xs text-gray-500">Biarkan kosong jika tidak ingin mengubah gambar.</p>
+                            </div>
                         </div>
+                        <img id="image-preview" class="hidden mt-4 w-32 h-32 object-cover rounded-lg border" src="#" alt="Pratinjau Gambar Baru" />
                     </div>
 
-                    <div class="flex items-center">
-                        <button type="submit"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Update Kategori
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2 border-t pt-4 mt-4">Template Spesifikasi</h3>
+                        <div id="spec-fields-container" class="space-y-3">
+                        </div>
+                        <button type="button" id="add-spec-field" class="mt-4 text-sm text-blue-600 hover:text-blue-800">
+                            + Tambah Spesifikasi Baru
                         </button>
-                        <a href="<?= BASEURL; ?>/Admin/ManajemenKategori" class="ms-3 py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100">
-                            Batal
-                        </a>
                     </div>
-                </form>
             </div>
+
+            <div class="flex items-center">
+                <button type="submit"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Update Kategori
+                </button>
+                <a href="<?= BASEURL; ?>/Admin/ManajemenKategori" class="ms-3 py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100">
+                    Batal
+                </a>
+            </div>
+            </form>
+        </div>
         </div>
     </section>
 </main>
