@@ -1,6 +1,7 @@
 <div id="crud-modal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-md max-h-full"> <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
             <div
                 class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -17,7 +18,7 @@
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" action="<?= BASEURL; ?>/Admin/ManajemenKategori/tambah" method="post">
+            <form class="p-4 md:p-5" action="<?= BASEURL; ?>/Admin/ManajemenKategori/tambah" method="post"enctype="multipart/form-data">
                 <div class="grid gap-4 mb-4 grid-cols-1">
                     <div>
                         <label for="name"
@@ -26,12 +27,18 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                             placeholder="Contoh: Kamera Mirrorless" required>
                     </div>
+                    <div>
+                        <label for="image" class="block mb-2 text-sm font-medium">Gambar Kategori</label>
+                        <input type="file" name="image" id="image-input" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                        <p class="mt-1 text-xs text-gray-500">PNG, JPG, atau JPEG (MAX. 10MB).</p>
 
+                        <img id="image-preview" class="hidden mt-4 w-32 h-32 object-cover rounded-lg" src="#" alt="Pratinjau Gambar" />
+                    </div>
                     <div>
                         <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2 border-t pt-4">Template Spesifikasi</h3>
-                        
+
                         <div id="spec-fields-container-modal" class="space-y-3">
-                            </div>
+                        </div>
 
                         <button type="button" id="add-spec-field-modal" class="mt-4 text-sm text-blue-600 hover:text-blue-800">
                             + Tambah Spesifikasi Baru
@@ -55,53 +62,3 @@
         </div>
     </div>
 </div>
-
-<script>
-// Pastikan script ini hanya berjalan satu kali, bahkan jika file modal dimuat beberapa kali.
-if (typeof specModalInitialized === 'undefined') {
-    var specModalInitialized = true;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Gunakan ID yang unik untuk elemen di dalam modal
-        const container = document.getElementById('spec-fields-container-modal');
-        const addButton = document.getElementById('add-spec-field-modal');
-        
-        // Fungsi untuk membuat satu blok input spesifikasi baru (tampilan atas-bawah)
-        function createSpecFieldModal(key = '', value = '') {
-            const fieldBlock = document.createElement('div');
-            fieldBlock.className = 'flex items-start gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800';
-
-            fieldBlock.innerHTML = `
-                <div class="flex-grow space-y-2">
-                    <div>
-                        <label class="text-xs font-medium text-gray-600 dark:text-gray-400">Nama Teknis</label>
-                        <input type="text" name="spec_keys[]" class="w-full p-2 border rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="cth: resolusi_mp" value="${key}">
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-600 dark:text-gray-400">Label Tampil</label>
-                        <input type="text" name="spec_values[]" class="w-full p-2 border rounded-md text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="cth: Resolusi (MP)" value="${value}">
-                    </div>
-                </div>
-                <div class="pt-6">
-                    <button type="button" class="remove-spec-field text-red-500 hover:text-red-700 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-            `;
-
-            fieldBlock.querySelector('.remove-spec-field').addEventListener('click', function() {
-                fieldBlock.remove();
-            });
-
-            container.appendChild(fieldBlock);
-        }
-
-        // Pastikan addButton ada sebelum menambahkan event listener
-        if (addButton) {
-            addButton.addEventListener('click', function() {
-                createSpecFieldModal();
-            });
-        }
-    });
-}
-</script>

@@ -51,13 +51,87 @@ class ManajemenProduk extends Controller
     }
 
 
+     private function uploadMultipleImages()
+    {
+        // Pastikan ada file yang dikirim
+        if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
+            Flasher::setFlash('Upload Gagal', 'Anda harus memilih setidaknya satu gambar.', 'danger');
+            return false;
+        }
+
+        $uploadedFiles = [];
+        $files = $_FILES['images'];
+        $fileCount = count($files['name']);
+        $uploadPath = dirname(__DIR__, 3) . '/public/assets/produk/';
+
+        // Pastikan direktori tujuan ada, jika tidak, coba buat
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        for ($i = 0; $i < $fileCount; $i++) {
+            if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+                continue; // Lewati jika ada error pada file ini
+            }
+
+            $tmpName = $files['tmp_name'][$i];
+            $namaFile = $files['name'][$i];
+
+            // Validasi Ekstensi
+            $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
+            $ekstensiGambar = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+            if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
+                Flasher::setFlash('Upload Gagal', "Format file '$namaFile' tidak didukung (hanya JPG, JPEG, PNG).", 'danger');
+                return false;
+            }
+
+            // Generate nama unik untuk file
+            $namaFileBaru = uniqid('produk-', true) . '.' . $ekstensiGambar;
+
+            // Pindahkan file ke folder tujuan
+            if (move_uploaded_file($tmpName, $uploadPath . $namaFileBaru)) {
+                $uploadedFiles[] = $namaFileBaru;
+            } else {
+                Flasher::setFlash('Upload Gagal', "Gagal memindahkan file '$namaFile'.", 'danger');
+                return false;
+            }
+        }
+        return $uploadedFiles;
+    }
+
+    /**
+     * Memproses data dari form tambah produk.
+     */
     public function tambah()
     {
-        if ($this->model('Product_model')->tambahDataProduk($_POST) > 0) {
+        // 1. Proses upload semua gambar
+        $uploadedImages = $this->uploadMultipleImages();
+
+        // 2. Jika upload gagal, hentikan proses dan kembali
+        if ($uploadedImages === false) {
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
+        }
+
+        // 3. Siapkan semua data untuk dikirim ke model
+        $data = [
+            'name' => $_POST['name'],
+            'slug' => strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name']))),
+            'category_id' => $_POST['category_id'],
+            'brand_id' => $_POST['brand_id'],
+            'daily_rental_price' => $_POST['daily_rental_price'],
+            'stock_quantity' => $_POST['stock_quantity'],
+            'description' => $_POST['description'],
+            'images' => $uploadedImages // Array berisi nama-nama file yang berhasil di-upload
+        ];
+
+        // 4. Panggil model untuk menyimpan data ke database
+        if ($this->model('Product_model')->tambahProduk($data) > 0) {
             Flasher::setFlash('Produk', 'berhasil ditambahkan', 'success');
         } else {
-            Flasher::setFlash('Produk', 'gagal ditambahkan', 'danger');
+            Flasher::setFlash('Produk', 'gagal ditambahkan ke database', 'danger');
         }
+        
         header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
         exit;
     }

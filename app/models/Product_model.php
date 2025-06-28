@@ -105,25 +105,55 @@ class Product_model
     }
 
     // Menggunakan satu versi 'tambahDataProduk' yang sudah diperbaiki
-    public function tambahDataProduk($data)
+  public function tambahProduk($data)
     {
-        $query = "INSERT INTO products (name, slug, description, specifications, stock_quantity, daily_rental_price, category_id, brand_id, status) VALUES (:name, :slug, :description, :specifications, :stock_quantity, :daily_rental_price, :category_id, :brand_id, :status)";
-        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['name'])));
-        $specifications = !empty($data['specifications']) ? $data['specifications'] : null;
+        // Memulai mode transaksi
+        $this->db->beginTransaction();
 
-        $this->db->query($query);
-        $this->db->bind('name', $data['name']);
-        $this->db->bind('slug', $slug);
-        $this->db->bind('description', $data['description']);
-        $this->db->bind('specifications', $specifications);
-        $this->db->bind('stock_quantity', $data['stock_quantity'], PDO::PARAM_INT);
-        $this->db->bind('daily_rental_price', $data['daily_rental_price']);
-        $this->db->bind('category_id', $data['category_id'], PDO::PARAM_INT);
-        $this->db->bind('brand_id', $data['brand_id'], PDO::PARAM_INT);
-        $this->db->bind('status', $data['status']);
+        try {
+            // 1. Insert ke tabel utama `products`
+            $queryProduk = "INSERT INTO " . $this->table . " (name, slug, description, stock_quantity, daily_rental_price, category_id, brand_id) 
+                            VALUES (:name, :slug, :description, :stock_quantity, :daily_rental_price, :category_id, :brand_id)";
+            
+            $this->db->query($queryProduk);
+            $this->db->bind('name', $data['name']);
+            $this->db->bind('slug', $data['slug']);
+            $this->db->bind('description', $data['description']);
+            $this->db->bind('stock_quantity', $data['stock_quantity']);
+            $this->db->bind('daily_rental_price', $data['daily_rental_price']);
+            $this->db->bind('category_id', $data['category_id']);
+            $this->db->bind('brand_id', $data['brand_id']);
+            $this->db->execute();
 
-        $this->db->execute();
-        return $this->db->rowCount();
+            // 2. Ambil ID dari produk yang baru saja dimasukkan
+            $productId = $this->db->lastInsertId();
+
+            // 3. Insert ke tabel `product_images`
+            if (!empty($data['images']) && is_array($data['images'])) {
+                $queryGambar = "INSERT INTO product_images (product_id, image_path, is_primary) 
+                                VALUES (:product_id, :image_path, :is_primary)";
+                
+                foreach ($data['images'] as $index => $imageName) {
+                    $this->db->query($queryGambar);
+                    $this->db->bind('product_id', $productId);
+                    $this->db->bind('image_path', $imageName);
+                    // Gambar pertama (index 0) otomatis menjadi gambar utama
+                    $this->db->bind('is_primary', ($index === 0) ? 1 : 0, PDO::PARAM_INT);
+                    $this->db->execute();
+                }
+            }
+
+            // Jika semua query berhasil, simpan perubahan secara permanen
+            $this->db->commit();
+            return 1; // Mengembalikan 1 sebagai tanda sukses
+
+        } catch (\PDOException $e) {
+            // Jika ada satu saja error, batalkan SEMUA query yang sudah dijalankan
+            $this->db->rollBack();
+            // Catat error untuk debugging (opsional)
+            error_log($e->getMessage()); 
+            return 0; // Mengembalikan 0 sebagai tanda gagal
+        }
     }
 
     /**
