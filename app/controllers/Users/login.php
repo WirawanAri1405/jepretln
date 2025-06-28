@@ -10,9 +10,7 @@ class Login extends Controller {
         }
         
         $data['judul'] = 'Login';
-        $this->view('templates/header', $data);
         $this->view('users/login/login', $data);
-        $this->view('templates/footer');
     }
 
     public function prosesLogin() {
