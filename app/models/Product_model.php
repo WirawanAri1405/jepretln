@@ -84,25 +84,44 @@ class Product_model
         return empty($conditions) ? "" : " WHERE " . implode(' AND ', $conditions);
     }
 
-    /**
-     * Mengambil detail satu produk berdasarkan ID.
-     */
-    public function getProductById($id)
+    public function getProdukByIdWithImages($id)
     {
-        // Query ini mengambil semua data yang dibutuhkan untuk halaman detail dan edit
-        $query = "SELECT 
-                    p.*, 
-                    c.name AS category_name, 
-                    b.name AS brand_name
-                  FROM products p 
-                  LEFT JOIN categories c ON p.category_id = c.id
-                  LEFT JOIN brands b ON p.brand_id = b.id
-                  WHERE p.id = :id";
-
-        $this->db->query($query);
+        // Query Pertama: Ambil data utama produk dengan JOIN
+        $queryProduk = "SELECT 
+                            p.id, p.name as product_name, p.slug, p.description, 
+                            p.specifications, p.stock_quantity, p.daily_rental_price,
+                            c.name as category_name, c.spec_template,
+                            b.name as brand_name,
+                            p.category_id, p.brand_id
+                        FROM " . $this->table . " p 
+                        LEFT JOIN categories c ON p.category_id = c.id
+                        LEFT JOIN brands b ON p.brand_id = b.id
+                        WHERE p.id = :id";
+                        
+        $this->db->query($queryProduk);
         $this->db->bind('id', $id, PDO::PARAM_INT);
-        return $this->db->single();
+        $produk = $this->db->single();
+
+        // Jika produk tidak ditemukan, langsung kembalikan false
+        if ($produk === false) {
+            return false;
+        }
+
+        // Query Kedua: Ambil semua gambar untuk produk tersebut
+        $queryImages = "SELECT id, image_path, is_primary 
+                        FROM product_images 
+                        WHERE product_id = :product_id 
+                        ORDER BY is_primary DESC, id ASC";
+        $this->db->query($queryImages);
+        $this->db->bind('product_id', $id, PDO::PARAM_INT);
+        
+        // Gabungkan hasil query gambar ke dalam array produk
+        $produk['images'] = $this->db->resultSet();
+        
+        return $produk;
     }
+
+    
 
     // Menggunakan satu versi 'tambahDataProduk' yang sudah diperbaiki
   public function tambahProduk($data)
@@ -113,7 +132,7 @@ class Product_model
         try {
             // 1. Insert ke tabel utama `products`
             $queryProduk = "INSERT INTO " . $this->table . " (name, slug, description, stock_quantity, daily_rental_price, category_id, brand_id) 
-                            VALUES (:name, :slug, :description, :stock_quantity, :daily_rental_price, :category_id, :brand_id)";
+                            VALUES (:name, :slug, :description, :stock_quantity, :daily_rental_price, :category_id, :brand_id, :specifications)";
             
             $this->db->query($queryProduk);
             $this->db->bind('name', $data['name']);
@@ -123,6 +142,7 @@ class Product_model
             $this->db->bind('daily_rental_price', $data['daily_rental_price']);
             $this->db->bind('category_id', $data['category_id']);
             $this->db->bind('brand_id', $data['brand_id']);
+            $this->db->bind('specifications', $data['specifications']);
             $this->db->execute();
 
             // 2. Ambil ID dari produk yang baru saja dimasukkan

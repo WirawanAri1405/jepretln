@@ -237,4 +237,20 @@ class ManajemenKategori extends Controller
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
     }
+     public function getSpecTemplate($id)
+    {
+        // Set header agar browser tahu ini adalah respons JSON
+        header('Content-Type: application/json');
+        
+        $kategori = $this->model('Kategori_model')->getKategoriById($id);
+
+        if ($kategori && !empty($kategori['spec_template'])) {
+            // Echo langsung string JSON dari database
+            echo $kategori['spec_template'];
+        } else {
+            // Jika tidak ada template, kembalikan objek JSON kosong
+            echo json_encode(['fields' => []]);
+        }
+        exit; // Hentikan eksekusi
+    }
 }

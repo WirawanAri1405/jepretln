@@ -51,7 +51,7 @@ class ManajemenProduk extends Controller
     }
 
 
-     private function uploadMultipleImages()
+    private function uploadMultipleImages()
     {
         // Pastikan ada file yang dikirim
         if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
@@ -112,6 +112,9 @@ class ManajemenProduk extends Controller
             header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
             exit;
         }
+           // Ambil array spesifikasi dari form dan ubah menjadi JSON
+        $spesifikasi = $_POST['spesifikasi'] ?? [];
+        $spesifikasiJson = json_encode($spesifikasi);
 
         // 3. Siapkan semua data untuk dikirim ke model
         $data = [
@@ -122,7 +125,8 @@ class ManajemenProduk extends Controller
             'daily_rental_price' => $_POST['daily_rental_price'],
             'stock_quantity' => $_POST['stock_quantity'],
             'description' => $_POST['description'],
-            'images' => $uploadedImages // Array berisi nama-nama file yang berhasil di-upload
+            'images' => $uploadedImages, // Array berisi nama-nama file yang berhasil di-upload
+             'specifications' => $spesifikasiJson // Simpan string JSON
         ];
 
         // 4. Panggil model untuk menyimpan data ke database
@@ -131,7 +135,7 @@ class ManajemenProduk extends Controller
         } else {
             Flasher::setFlash('Produk', 'gagal ditambahkan ke database', 'danger');
         }
-        
+
         header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
         exit;
     }
@@ -151,12 +155,23 @@ class ManajemenProduk extends Controller
     public function detail($id)
     {
         $data['judul'] = 'Detail Produk';
-        $data['product'] = $this->model('Product_model')->getProductById($id);
+
+        // Panggil fungsi model yang sudah kita kenal
+        $produk = $this->model('Product_model')->getProdukByIdWithImages($id);
+
+        // --- PENGECEKAN KUNCI ---
+        // Gunakan '=== false' untuk perbandingan yang lebih akurat
+        if ($produk === false) {
+            Flasher::setFlash('Produk', 'tidak ditemukan dengan ID ' . htmlspecialchars($id), 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
+        }
+
+        // Jika berhasil, kirim data ke view
+        $data['product'] = $produk;
 
         $this->view('admin/templates/header', $data);
-        $this->view('admin/templates/sidebar', $data);
-        $this->view('admin/templates/navbar', $data);
-        $this->view('admin/manajemenProduk/detail', $data); // Memuat view detail
+        $this->view('admin/manajemenProduk/detail', $data);
         $this->view('admin/templates/footer');
     }
 
