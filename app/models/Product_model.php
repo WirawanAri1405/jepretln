@@ -3,6 +3,8 @@
 class Product_model
 {
     private $table = 'products';
+    private $tabelProduk = 'products';
+    private $tabelGambar = 'product_images';
     private $db;
 
     public function __construct()
@@ -124,31 +126,37 @@ class Product_model
     
 
     // Menggunakan satu versi 'tambahDataProduk' yang sudah diperbaiki
-  public function tambahProduk($data)
+   public function tambahProduk($data)
     {
-        // Memulai mode transaksi
         $this->db->beginTransaction();
-
         try {
-            // 1. Insert ke tabel utama `products`
-            $queryProduk = "INSERT INTO " . $this->table . " (name, slug, description, stock_quantity, daily_rental_price, category_id, brand_id) 
-                            VALUES (:name, :slug, :description, :stock_quantity, :daily_rental_price, :category_id, :brand_id, :specifications)";
+            // --- PERBAIKAN UTAMA ADA DI QUERY INI ---
+            // Pastikan semua kolom dari form ada di sini
+            $queryProduk = "INSERT INTO " . $this->table . " 
+                            (name, slug, description, specifications, stock_quantity, daily_rental_price, category_id, brand_id, status) 
+                            VALUES 
+                            (:name, :slug, :description, :specifications, :stock_quantity, :daily_rental_price, :category_id, :brand_id, 'available')";
             
             $this->db->query($queryProduk);
+            
+            // --- DAN DI PROSES BINDING INI ---
             $this->db->bind('name', $data['name']);
             $this->db->bind('slug', $data['slug']);
             $this->db->bind('description', $data['description']);
+            $this->db->bind('specifications', $data['specifications']);
             $this->db->bind('stock_quantity', $data['stock_quantity']);
             $this->db->bind('daily_rental_price', $data['daily_rental_price']);
             $this->db->bind('category_id', $data['category_id']);
             $this->db->bind('brand_id', $data['brand_id']);
-            $this->db->bind('specifications', $data['specifications']);
+            
             $this->db->execute();
 
-            // 2. Ambil ID dari produk yang baru saja dimasukkan
             $productId = $this->db->lastInsertId();
+            if (!$productId) {
+                throw new \Exception("Gagal mendapatkan ID produk yang baru.");
+            }
 
-            // 3. Insert ke tabel `product_images`
+            // Proses penyimpanan gambar (kode ini sudah benar dan tidak perlu diubah)
             if (!empty($data['images']) && is_array($data['images'])) {
                 $queryGambar = "INSERT INTO product_images (product_id, image_path, is_primary) 
                                 VALUES (:product_id, :image_path, :is_primary)";
@@ -157,34 +165,39 @@ class Product_model
                     $this->db->query($queryGambar);
                     $this->db->bind('product_id', $productId);
                     $this->db->bind('image_path', $imageName);
-                    // Gambar pertama (index 0) otomatis menjadi gambar utama
                     $this->db->bind('is_primary', ($index === 0) ? 1 : 0, PDO::PARAM_INT);
                     $this->db->execute();
                 }
             }
 
-            // Jika semua query berhasil, simpan perubahan secara permanen
             $this->db->commit();
-            return 1; // Mengembalikan 1 sebagai tanda sukses
+            return 1;
 
-        } catch (\PDOException $e) {
-            // Jika ada satu saja error, batalkan SEMUA query yang sudah dijalankan
+        } catch (\Exception $e) {
             $this->db->rollBack();
-            // Catat error untuk debugging (opsional)
-            error_log($e->getMessage()); 
-            return 0; // Mengembalikan 0 sebagai tanda gagal
+            // Untuk debugging, Anda bisa melihat error pastinya di log PHP
+            error_log("Error di tambahDataProduk: " . $e->getMessage()); 
+            return 0;
         }
+    }
+     public function getGambarByProdukId($id)
+    {
+        $this->db->query("SELECT * FROM {$this->tabelGambar} WHERE product_id = :id");
+        $this->db->bind('id', $id);
+        return $this->db->resultSet();
     }
 
     /**
      * Menghapus data produk.
      */
-    public function hapusDataProduk($id)
+   public function hapusDataProduk($id)
     {
-        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
+        $query = "DELETE FROM {$this->tabelProduk} WHERE id = :id";
+        
         $this->db->query($query);
         $this->db->bind('id', $id, PDO::PARAM_INT);
         $this->db->execute();
+
         return $this->db->rowCount();
     }
 
@@ -228,5 +241,75 @@ class Product_model
 
         $this->db->execute();
         return $this->db->rowCount();
+    }
+    public function getGambarById($id) {
+        $this->db->query("SELECT * FROM product_images WHERE id = :id");
+        $this->db->bind('id', $id);
+        return $this->db->single();
+    }
+
+    public function hapusGambarById($id) {
+        $this->db->query("DELETE FROM product_images WHERE id = :id");
+        $this->db->bind('id', $id);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+     public function updateDataProduk($data)
+    {
+        $this->db->beginTransaction();
+        try {
+            // 1. Update data utama di tabel 'products'
+            $queryProduk = "UPDATE {$this->tabelProduk} SET 
+                                name = :name, 
+                                slug = :slug, 
+                                description = :description, 
+                                specifications = :specifications, 
+                                stock_quantity = :stock_quantity, 
+                                daily_rental_price = :daily_rental_price, 
+                                category_id = :category_id, 
+                                brand_id = :brand_id
+                            WHERE id = :id";
+            
+            $this->db->query($queryProduk);
+            $this->db->bind('id', $data['id']);
+            $this->db->bind('name', $data['name']);
+            $this->db->bind('slug', $data['slug']);
+            $this->db->bind('description', $data['description']);
+            $this->db->bind('specifications', $data['specifications']);
+            $this->db->bind('stock_quantity', $data['stock_quantity']);
+            $this->db->bind('daily_rental_price', $data['daily_rental_price']);
+            $this->db->bind('category_id', $data['category_id']);
+            $this->db->bind('brand_id', $data['brand_id']);
+            $this->db->execute();
+
+            // 2. Tambahkan gambar baru jika ada yang di-upload
+            if (!empty($data['new_images']) && is_array($data['new_images'])) {
+                // Cek dulu apakah sudah ada gambar utama untuk produk ini
+                $queryCekUtama = "SELECT COUNT(id) as total FROM {$this->tabelGambar} WHERE product_id = :id AND is_primary = 1";
+                $this->db->query($queryCekUtama);
+                $this->db->bind('id', $data['id']);
+                $hasPrimary = $this->db->single()['total'] > 0;
+
+                $queryGambar = "INSERT INTO {$this->tabelGambar} (product_id, image_path, is_primary) VALUES (:pid, :path, :primary)";
+                foreach ($data['new_images'] as $imageName) {
+                    $this->db->query($queryGambar);
+                    $this->db->bind('pid', $data['id']);
+                    $this->db->bind('path', $imageName);
+                    // Jadikan gambar baru sebagai utama HANYA jika belum ada gambar utama sebelumnya
+                    $this->db->bind('primary', !$hasPrimary ? 1 : 0);
+                    $this->db->execute();
+                    $hasPrimary = true; // Set agar gambar berikutnya tidak menjadi utama
+                }
+            }
+            
+            $this->db->commit();
+            return $this->db->rowCount();
+
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            error_log("Error di updateDataProduk: " . $e->getMessage());
+            return 0;
+        }
     }
 }
