@@ -65,6 +65,7 @@
     --color-white: #ffffff;
     --spacing: 0.25rem;
     --breakpoint-md: 48rem;
+    --breakpoint-lg: 64rem;
     --breakpoint-xl: 80rem;
     --container-xs: 20rem;
     --container-sm: 24rem;
@@ -1359,6 +1360,9 @@
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
   }
+  .mb-5 {
+    margin-bottom: calc(var(--spacing) * 5);
+  }
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
@@ -1613,15 +1617,6 @@
   .w-16 {
     width: calc(var(--spacing) * 16);
   }
-  .w-24 {
-    width: calc(var(--spacing) * 24);
-  }
-  .w-32 {
-    width: calc(var(--spacing) * 32);
-  }
-  .w-40 {
-    width: calc(var(--spacing) * 40);
-  }
   .w-44 {
     width: calc(var(--spacing) * 44);
   }
@@ -1654,6 +1649,9 @@
   }
   .max-w-md {
     max-width: var(--container-md);
+  }
+  .max-w-screen-lg {
+    max-width: var(--breakpoint-lg);
   }
   .max-w-screen-md {
     max-width: var(--breakpoint-md);
@@ -2453,8 +2451,8 @@
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
   }
-  .pt-10 {
-    padding-top: calc(var(--spacing) * 10);
+  .pt-6 {
+    padding-top: calc(var(--spacing) * 6);
   }
   .search-filtering-row {
     .datatable-wrapper .datatable-container thead tr& th {
@@ -2976,6 +2974,13 @@
       }
     }
   }
+  .hover\:text-blue-800 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-blue-800);
+      }
+    }
+  }
   .hover\:text-gray-600 {
     &:hover {
       @media (hover: hover) {
@@ -3001,6 +3006,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-900);
+      }
+    }
+  }
+  .hover\:text-red-700 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-red-700);
       }
     }
   }
@@ -3381,6 +3393,11 @@
   .dark\:border-transparent {
     @media (prefers-color-scheme: dark) {
       border-color: transparent;
+    }
+  }
+  .dark\:border-white {
+    @media (prefers-color-scheme: dark) {
+      border-color: var(--color-white);
     }
   }
   .dark\:bg-blue-600 {
