@@ -47,13 +47,13 @@
                                                     <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                                 </svg>
                                             </button>
-                                            <div id="kategori-dropdown-<?= $kategori['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow">
+                                            <div id="kategori-dropdown-<?= $kategori['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
                                                 <ul class="py-1 text-sm" aria-labelledby="kategori-dropdown-button-<?= $kategori['id']; ?>">
-                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKategori/detail/<?= $kategori['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Show</a></li>
-                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKategori/edit/<?= $kategori['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Edit</a></li>
+                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKategori/detail/<?= $kategori['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Show</a></li>
+                                                    <li><a href="<?= BASEURL; ?>/Admin/ManajemenKategori/edit/<?= $kategori['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Edit</a></li>
                                                 </ul>
                                                 <div class="py-1">
-                                                    <a href="<?= BASEURL; ?>/Admin/ManajemenKategori/hapus/<?= $kategori['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini? Kategori yang sudah digunakan pada produk mungkin tidak bisa dihapus.');">Delete</a>
+                                                    <a href="<?= BASEURL; ?>/Admin/ManajemenKategori/hapus/<?= $kategori['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini? Kategori yang sudah digunakan pada produk mungkin tidak bisa dihapus.');">Delete</a>
                                                 </div>
                                             </div>
                                         </td>

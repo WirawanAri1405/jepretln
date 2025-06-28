@@ -50,18 +50,6 @@ class ManajemenProduk extends Controller
         $this->view('admin/templates/footer');
     }
 
-
-    public function tambah()
-    {
-        if ($this->model('Product_model')->tambahDataProduk($_POST) > 0) {
-            Flasher::setFlash('Produk', 'berhasil ditambahkan', 'success');
-        } else {
-            Flasher::setFlash('Produk', 'gagal ditambahkan', 'danger');
-        }
-        header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
-        exit;
-    }
-
     public function hapus($id)
     {
         if ($this->model('Product_model')->hapusDataProduk($id) > 0) {
@@ -105,30 +93,60 @@ class ManajemenProduk extends Controller
         $this->view('admin/templates/footer');
     }
 
-    // Ganti method update lama Anda dengan yang ini
+    public function tambah()
+    {
+        // 1. Ambil model dan buat slug terlebih dahulu
+        $product_model = $this->model('Product_model');
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
+
+        // 2. Cek apakah slug sudah ada di database
+        if ($product_model->isSlugExists($slug)) {
+            // Jika slug sudah ada, kirim pesan error dan redirect kembali
+            Flasher::setFlash('Produk', 'gagal ditambahkan. Nama produk sudah digunakan (slug duplikat).', 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
+        }
+
+        // 3. Jika slug unik, baru lanjutkan proses penambahan data
+
+        // Encode spesifikasi (jika ada)
+        if (isset($_POST['specifications']) && is_array($_POST['specifications'])) {
+            $_POST['specifications'] = json_encode($_POST['specifications']);
+        } else {
+            $_POST['specifications'] = null;
+        }
+
+        // Panggil model untuk menambah data. Kita tidak perlu mengirim slug lagi karena model akan membuatnya sendiri.
+        if ($this->model('Product_model')->tambahDataProduk($_POST) > 0) {
+            Flasher::setFlash('Produk', 'berhasil ditambahkan', 'success');
+        } else {
+            Flasher::setFlash('Produk', 'gagal ditambahkan karena kesalahan teknis.', 'danger');
+        }
+
+        header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+        exit;
+    }
+
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Panggil model untuk mencoba mengubah data
+
+            // Cek dan encode data spesifikasi, sama seperti di fungsi tambah()
+            if (isset($_POST['specifications']) && is_array($_POST['specifications'])) {
+                $_POST['specifications'] = json_encode($_POST['specifications']);
+            } else {
+                $_POST['specifications'] = null;
+            }
+
             $result = $this->model('Product_model')->ubahDataProduk($_POST);
 
-            if ($result === false) {
-                // Ini terjadi jika validasi JSON di model gagal
-                Flasher::setFlash('Produk', 'gagal diperbarui. Format JSON pada spesifikasi tidak valid.', 'danger');
-                // Redirect KEMBALI ke halaman edit, bukan ke index, agar user bisa memperbaiki
-                header('Location: ' . BASEURL . '/Admin/ManajemenProduk/edit/' . $_POST['id']);
-                exit;
-            } elseif ($result > 0) {
-                // Jika berhasil (ada baris yang ter-update)
+            if ($result > 0) {
                 Flasher::setFlash('Produk', 'berhasil diperbarui', 'success');
-                header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
-                exit;
             } else {
-                // Jika tidak ada yang berubah (user klik simpan tanpa mengubah apapun)
                 Flasher::setFlash('Produk', 'tidak ada perubahan data.', 'info');
-                header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
-                exit;
             }
+            header('Location: ' . BASEURL . '/Admin/ManajemenProduk');
+            exit;
         }
     }
 }

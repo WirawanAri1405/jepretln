@@ -8,6 +8,7 @@
                     <input type="hidden" name="id" value="<?= $data['product']['id']; ?>">
 
                     <div class="space-y-6">
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">ID Produk</p>
@@ -21,11 +22,15 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori</label>
-                                <select name="category_id" id="category_id" class="mt-1 w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm" required>
+                                <label for="category_id_edit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori</label>
+                                <select name="category_id" id="category_id_edit" class="mt-1 w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm" required>
                                     <option value="">Pilih Kategori</option>
                                     <?php foreach ($data['categories'] as $category): ?>
-                                        <option value="<?= $category['id']; ?>" <?= ($category['id'] == $data['product']['category_id']) ? 'selected' : ''; ?>>
+                                        <?php
+                                        $selected = ($category['id'] == $data['product']['category_id']) ? 'selected' : '';
+                                        $templateJson = htmlspecialchars($category['spec_template'] ?? '{}', ENT_QUOTES, 'UTF-8');
+                                        ?>
+                                        <option value="<?= $category['id']; ?>" data-template='<?= $templateJson ?>' <?= $selected ?>>
                                             <?= htmlspecialchars($category['name']); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -70,21 +75,83 @@
                         </div>
 
                         <div>
-                            <label for="specifications" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Spesifikasi (JSON)</label>
-                            <textarea name="specifications" id="specifications" rows="4" class="mt-1 w-full p-2 font-mono rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm"><?= htmlspecialchars($data['product']['specifications']); ?></textarea>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Spesifikasi Detail</label>
+                            <div id="dynamic-spec-fields-container-edit" class="space-y-4 p-4 mt-1 w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm">
+                                <p class="text-gray-500 text-sm">Pilih kategori untuk menampilkan field spesifikasi.</p>
+                            </div>
                         </div>
 
-                        <div class="flex justify-end space-x-3 pt-4">
-                            <a href="<?= BASEURL; ?>/Admin/ManajemenProduk" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500">
+                        <div class="flex justify-end space-x-3 pt-4 border-t mt-6 dark:border-gray-600">
+                            <a href="<?= BASEURL; ?>/Admin/ManajemenProduk" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500">
                                 Batal
                             </a>
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
                                 Simpan Perubahan
                             </button>
                         </div>
+
                     </div>
                 </form>
             </div>
         </div>
     </section>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.getElementById('category_id_edit');
+        const specContainer = document.getElementById('dynamic-spec-fields-container-edit');
+
+        const existingSpecsJson = <?= json_encode($data['product']['specifications'] ?? '{}'); ?>;
+        const existingSpecs = JSON.parse(existingSpecsJson);
+
+        function generateSpecFields() {
+            const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+            const templateData = selectedOption.getAttribute('data-template');
+
+            specContainer.innerHTML = '';
+
+            if (!templateData) {
+                specContainer.innerHTML = '<p class="text-gray-500 text-sm">Template tidak ditemukan untuk kategori ini.</p>';
+                return;
+            }
+
+            try {
+                const template = JSON.parse(templateData);
+                const fields = template.fields;
+
+                if (Object.keys(fields).length === 0) {
+                    specContainer.innerHTML = '<p class="text-gray-500 text-sm">Tidak ada template spesifikasi untuk kategori ini.</p>';
+                    return;
+                }
+
+                for (const key in fields) {
+                    const labelText = fields[key];
+                    const existingValue = existingSpecs[key] || '';
+
+                    const fieldHtml = `
+                    <div>
+                        <label for="spec_${key}" class="block mb-1 text-xs font-medium text-gray-600 dark:text-gray-400">${labelText}</label>
+                        <input type="text" 
+                               id="spec_${key}" 
+                               name="specifications[${key}]" 
+                               value="${existingValue.replace(/"/g, '&quot;')}"
+                               class="w-full p-2 border rounded-md text-sm bg-white dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                               placeholder="Masukkan ${labelText}...">
+                    </div>
+                `;
+                    specContainer.innerHTML += fieldHtml;
+                }
+            } catch (e) {
+                specContainer.innerHTML = '<p class="text-red-500 text-sm">Error: Format template JSON tidak valid.</p>';
+                console.error("JSON Parse Error:", e);
+            }
+        }
+
+        categorySelect.addEventListener('change', generateSpecFields);
+
+        if (categorySelect.value) {
+            generateSpecFields();
+        }
+    });
+</script>

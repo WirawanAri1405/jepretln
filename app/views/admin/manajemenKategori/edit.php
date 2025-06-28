@@ -2,23 +2,23 @@
     <section>
         <div class="max-w-screen-lg mx-auto">
             <h1 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Edit Kategori</h1>
-            
+
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg p-6">
                 <form action="<?= BASEURL; ?>/Admin/ManajemenKategori/update" method="post">
                     <input type="hidden" name="id" value="<?= $data['kategori']['id']; ?>">
-                    
+
                     <div class="grid gap-6 mb-6">
                         <div>
                             <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Kategori</label>
                             <input type="text" name="name" id="name" autocomplete="off"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                                class="mt-1 w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm"
                                 required value="<?= htmlspecialchars($data['kategori']['name']); ?>">
                         </div>
 
                         <div>
                             <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2 border-t pt-4 mt-4">Template Spesifikasi</h3>
                             <div id="spec-fields-container" class="space-y-3">
-                                </div>
+                            </div>
                             <button type="button" id="add-spec-field" class="mt-4 text-sm text-blue-600 hover:text-blue-800">
                                 + Tambah Spesifikasi Baru
                             </button>
@@ -41,22 +41,22 @@
 </main>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('spec-fields-container');
-    const addButton = document.getElementById('add-spec-field');
-    
-    function createSpecField(key = '', value = '') {
-        const fieldBlock = document.createElement('div');
-        fieldBlock.className = 'flex items-start gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800';
-        fieldBlock.innerHTML = `
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('spec-fields-container');
+        const addButton = document.getElementById('add-spec-field');
+
+        function createSpecField(key = '', value = '') {
+            const fieldBlock = document.createElement('div');
+            fieldBlock.className = 'flex items-start gap-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800';
+            fieldBlock.innerHTML = `
             <div class="flex-grow space-y-2">
                 <div>
                     <label class="text-xs font-medium text-gray-600 dark:text-gray-400">Nama Teknis</label>
-                    <input type="text" name="spec_keys[]" class="w-full p-2 border rounded-md text-sm" placeholder="cth: resolusi_mp" value="${key}">
+                    <input type="text" name="spec_keys[]" class="mt-1 w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm" placeholder="cth: resolusi_mp" value="${key}">
                 </div>
                 <div>
                     <label class="text-xs font-medium text-gray-600 dark:text-gray-400">Label Tampil</label>
-                    <input type="text" name="spec_values[]" class="w-full p-2 border rounded-md text-sm" placeholder="cth: Resolusi (MP)" value="${value}">
+                    <input type="text" name="spec_values[]" class="mt-1 w-full p-2 rounded-md border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 shadow-sm text-sm" placeholder="cth: Resolusi (MP)" value="${value}">
                 </div>
             </div>
             <div class="pt-6">
@@ -65,22 +65,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </div>
         `;
-        fieldBlock.querySelector('.remove-spec-field').addEventListener('click', () => fieldBlock.remove());
-        container.appendChild(fieldBlock);
-    }
-
-    addButton.addEventListener('click', () => createSpecField());
-
-    // Memuat data template yang sudah ada saat halaman edit dibuka
-    try {
-        const existingTemplate = JSON.parse(<?= json_encode($data['kategori']['spec_template'] ?? '{}'); ?>);
-        if (existingTemplate && existingTemplate.fields) {
-            for (const key in existingTemplate.fields) {
-                createSpecField(key, existingTemplate.fields[key]);
-            }
+            fieldBlock.querySelector('.remove-spec-field').addEventListener('click', () => fieldBlock.remove());
+            container.appendChild(fieldBlock);
         }
-    } catch (e) {
-        console.error('Could not parse spec_template JSON:', e);
-    }
-});
+
+        addButton.addEventListener('click', () => createSpecField());
+
+        // Memuat data template yang sudah ada saat halaman edit dibuka
+        try {
+            const existingTemplate = JSON.parse(<?= json_encode($data['kategori']['spec_template'] ?? '{}'); ?>);
+            if (existingTemplate && existingTemplate.fields) {
+                for (const key in existingTemplate.fields) {
+                    createSpecField(key, existingTemplate.fields[key]);
+                }
+            }
+        } catch (e) {
+            console.error('Could not parse spec_template JSON:', e);
+        }
+    });
 </script>

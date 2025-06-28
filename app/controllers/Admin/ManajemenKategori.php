@@ -15,12 +15,12 @@ class ManajemenKategori extends Controller
         $data['search_action'] = BASEURL . '/Admin/ManajemenKategori';
         $data['search_placeholder'] = 'Cari nama atau slug kategori...';
         $data['search_term'] = $search_term;
-        
+
         // Logika Paginasi
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $results_per_page = 10;
         $offset = ($page - 1) * $results_per_page;
-        
+
         // Ambil total data dan data per halaman dari model
         $total_results = $kategori_model->countAllKategori($search_term);
         $total_pages = ceil($total_results / $results_per_page);
@@ -60,7 +60,7 @@ class ManajemenKategori extends Controller
     public function tambah()
     {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
-        
+
         // Gunakan fungsi helper untuk merakit JSON
         $specTemplateJson = $this->buildSpecJson($_POST['spec_keys'] ?? [], $_POST['spec_values'] ?? []);
 
@@ -79,11 +79,11 @@ class ManajemenKategori extends Controller
         exit;
     }
 
-   public function edit($id)
+    public function edit($id)
     {
         $data['judul'] = 'Edit Kategori';
         $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
-        
+
         $this->view('admin/templates/header', $data);
         $this->view('admin/templates/sidebar');
         $this->view('admin/templates/navbar');
@@ -94,16 +94,16 @@ class ManajemenKategori extends Controller
     public function update()
     {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $_POST['name'])));
-        
+
         $specTemplateJson = $this->buildSpecJson($_POST['spec_keys'] ?? [], $_POST['spec_values'] ?? []);
-        
+
         $data = [
             'id' => $_POST['id'],
             'name' => $_POST['name'],
             'slug' => $slug,
             'spec_template' => $specTemplateJson
         ];
-        
+
         if ($this->model('Kategori_model')->updateDataKategori($data) > 0) {
             Flasher::setFlash('Kategori', 'berhasil diubah', 'success');
         } else {
@@ -112,15 +112,17 @@ class ManajemenKategori extends Controller
         header('Location: ' . BASEURL . '/Admin/ManajemenKategori');
         exit;
     }
-        public function detail($id)
+    public function detail($id)
     {
         $data['judul'] = 'Detail Kategori';
         $data['kategori'] = $this->model('Kategori_model')->getKategoriById($id);
         $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
         $this->view('admin/manajemenKategori/detail', $data);
         $this->view('admin/templates/footer');
     }
-         public function hapus($id)
+    public function hapus($id)
     {
         if ($this->model('Kategori_model')->hapusDataKategori($id) > 0) {
             Flasher::setFlash('Data Kategori', 'berhasil dihapus', 'success');

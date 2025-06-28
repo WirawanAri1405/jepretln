@@ -104,18 +104,36 @@ class Product_model
         return $this->db->single();
     }
 
-    // Menggunakan satu versi 'tambahDataProduk' yang sudah diperbaiki
+    public function isSlugExists($slug, $excludeId = null)
+    {
+        $query = "SELECT id FROM " . $this->table . " WHERE slug = :slug";
+        if ($excludeId !== null) {
+            $query .= " AND id != :excludeId";
+        }
+
+        $this->db->query($query);
+        $this->db->bind('slug', $slug);
+        if ($excludeId !== null) {
+            $this->db->bind('excludeId', $excludeId, PDO::PARAM_INT);
+        }
+
+        $this->db->execute();
+        return $this->db->rowCount() > 0;
+    }
+
     public function tambahDataProduk($data)
     {
+        // ... (kode fungsi tambahDataProduk Anda tidak perlu diubah) ...
+        // Pastikan di dalam fungsi ini ada pembuatan slug
         $query = "INSERT INTO products (name, slug, description, specifications, stock_quantity, daily_rental_price, category_id, brand_id, status) VALUES (:name, :slug, :description, :specifications, :stock_quantity, :daily_rental_price, :category_id, :brand_id, :status)";
+
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['name'])));
-        $specifications = !empty($data['specifications']) ? $data['specifications'] : null;
 
         $this->db->query($query);
         $this->db->bind('name', $data['name']);
-        $this->db->bind('slug', $slug);
+        $this->db->bind('slug', $slug); // slug dibuat di sini
         $this->db->bind('description', $data['description']);
-        $this->db->bind('specifications', $specifications);
+        $this->db->bind('specifications', $data['specifications']);
         $this->db->bind('stock_quantity', $data['stock_quantity'], PDO::PARAM_INT);
         $this->db->bind('daily_rental_price', $data['daily_rental_price']);
         $this->db->bind('category_id', $data['category_id'], PDO::PARAM_INT);
@@ -147,7 +165,8 @@ class Product_model
 
     public function getAllCategories()
     {
-        $this->db->query("SELECT id, name FROM categories ORDER BY name ASC");
+        // Tambahkan spec_template ke dalam query SELECT
+        $this->db->query("SELECT id, name, spec_template FROM categories ORDER BY name ASC");
         return $this->db->resultSet();
     }
     // Menggunakan satu versi 'ubahDataProduk' yang sudah diperbaiki
