@@ -20,7 +20,7 @@ class App{
             $url = array_values($url);
             
     } elseif (isset($url[0]) && file_exists("../app/controllers/{$url[0]}.php")) {
-        var_dump($url);
+        //var_dump($url);
         // Jika controller di root folder
         $controllerPath = "../app/controllers/{$url[0]}.php";
         
@@ -31,6 +31,7 @@ class App{
         
     }
     else{
+        //var_dump($url);
         
         require_once '../app/controllers/' . $this->controller . '.php';
     }
