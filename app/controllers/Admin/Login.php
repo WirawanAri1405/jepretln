@@ -29,7 +29,7 @@ class Login extends Controller {
             $email = $_POST['email'];
             $password = $_POST['password'];
 
-            $user_model = $this->model('User_model');
+            $user_model = $this->model('admin_model');
             $user_ditemukan = $user_model->cekLogin($email, $password);
 
             if ($user_ditemukan) {
