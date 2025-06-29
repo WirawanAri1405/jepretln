@@ -6,7 +6,7 @@ class tentang_kami extends Controller {
     {
         $data['judul'] = 'tentang kami';
         $this->view('templates/header', $data);
-        $this->view('Users/tentang-kami', $data);
+        $this->view('Users/tentang_kami', $data);
         $this->view('templates/footer');
     }
 }
