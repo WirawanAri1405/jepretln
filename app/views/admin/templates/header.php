@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Halaman <?= $data['judul'];?></title>
     <link rel="stylesheet" href="<?= BASEURL?>  /css/output.css">
     <link rel="stylesheet" href="<?= BASEURL?>  /css/admin/sidebar.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -64,7 +64,32 @@ class Database{
     public function rowCount(){
        return $this->stmt->rowCount();
     }
-      public function lastInsertId(){
+     public function beginTransaction()
+    {
+        return $this->dbh->beginTransaction();
+    }
+
+    /**
+     * Menyimpan transaksi (commit)
+     */
+    public function commit()
+    {
+        return $this->dbh->commit();
+    }
+
+    /**
+     * Membatalkan transaksi (rollback)
+     */
+    public function rollBack()
+    {
+        return $this->dbh->rollBack();
+    }
+
+    /**
+     * Mengambil ID terakhir yang di-insert
+     */
+    public function lastInsertId()
+    {
         return $this->dbh->lastInsertId();
     }
 }
