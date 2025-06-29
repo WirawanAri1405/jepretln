@@ -26,7 +26,10 @@
                     </form>
                 <?php endif; ?>
                 <div class="flex items-center gap-4">
-                    <span class="text-gray-700 dark:text-gray-200">Hello, User</span>
+                     <span class="text-gray-700 dark:text-gray-200">
+                <?php //mendisplay user name admin mengunakan htmlspecialchars untuk keamanan ?>
+                    Hello, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?>
+                </span>
                     <img src="" alt="User Avatar" class="rounded-full w-8 h-8">
                 </div>
             </header>
