@@ -153,4 +153,14 @@ class User_model {
         }
         return false; // Tidak ada file yang diupload atau terjadi error
     }
+
+    public function updatePassword($id, $hashedPassword) {
+        $query = "UPDATE users SET password = :password, updated_at = :updated_at WHERE id = :id";
+        $this->db->query($query);
+        $this->db->bind('password', $hashedPassword);
+        $this->db->bind('updated_at', date('Y-m-d H:i:s'));
+        $this->db->bind('id', $id);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 }
