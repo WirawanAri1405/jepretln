@@ -151,5 +151,14 @@
                     Laporan Kinerja
                 </div>
             </div>
+            <div class="relative group border-t dark:border-gray-700 mt-4 pt-4">
+            <a href="<?= BASEURL; ?>/admin/login/logout" class="flex items-center gap-3 text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-800/50 p-2 rounded">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Log Out</span>
+            </a>
+            <div class="tooltip absolute left-full top-1/2 -translate-y-1/2 ml-2 bg-black text-white text-sm rounded px-2 py-1 z-50 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 whitespace-nowrap">
+                Log Out
+            </div>
+        </div>
         </nav>
     </div>
