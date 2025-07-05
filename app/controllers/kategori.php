@@ -9,33 +9,48 @@ class Kategori extends Controller {
             exit;
         }
 
-        // 2. Memuat Model yang Diperlukan
+        // 2. Memuat Model
         $productModel = $this->model('Product_model');
         $kategoriModel = $this->model('Kategori_model'); 
 
-        // 3. Mengambil Data Kategori dari Database berdasarkan slug
+        // 3. Mengambil Data Kategori
         $kategori = $kategoriModel->getCategoryBySlug($kategoriSlug);
 
         if (!$kategori) {
             echo "Kategori tidak ditemukan.";
             return;
         }
-
-        // 4. Mengambil Data Produk Berdasarkan ID Kategori
+        
+        // --- AWAL LOGIKA PAGINASI PRODUK ---
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $products_per_page = 12; // Tampilkan 12 produk per halaman
+        $offset = ($page - 1) * $products_per_page;
+        
         $filters = ['category_id' => $kategori['id']];
-        // Mengambil semua gambar dengan memanggil fungsi getProdukByIdWithImages untuk setiap produk
-        $productsData = $productModel->getAllProducts(null, $filters, 999, 0);
+
+        // Menghitung total produk dalam kategori ini untuk paginasi
+        $total_products = $productModel->countAllProducts(null, $filters);
+        $total_pages = ceil($total_products / $products_per_page);
+        
+        // Mengambil produk untuk halaman saat ini saja
+        $productsData = $productModel->getAllProducts(null, $filters, $products_per_page, $offset);
+        
         $products = [];
         foreach ($productsData as $p) {
             $products[] = $productModel->getProdukByIdWithImages($p['id']);
         }
+        // --- AKHIR LOGIKA PAGINASI PRODUK ---
 
         // 5. Menyiapkan Data untuk View
         $data['judul'] = 'Kategori: ' . htmlspecialchars($kategori['name']);
         $data['kategori'] = $kategori;
         $data['products'] = $products;
+        
+        // Data paginasi untuk view
+        $data['current_page'] = $page;
+        $data['total_pages'] = $total_pages;
 
-        // !!! TAMBAHAN: Ambil data untuk navigasi header !!!
+        // Data untuk navigasi header
         $data['kategori_nav'] = $kategoriModel->getAllKategori(null, 100, 0);
 
         // 6. Memuat View

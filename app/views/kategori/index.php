@@ -13,7 +13,7 @@
                 </div>
             <?php else: ?>
                 <?php foreach ($data['products'] as $product): ?>
-                    <div class="bg-[#EBD3C2] rounded-xl p-4 shadow text-center flex flex-col">
+                    <div class="bg-[#EBD3C2] rounded-xl p-4 shadow text-center flex flex-col ">
                         <div class="flex-grow">
                             <?php
                             // Mengambil gambar utama produk
@@ -46,5 +46,51 @@
             <?php endif; ?>
 
         </div>
+        <nav aria-label="Pagination Produk" class="mt-10">
+            <?php if ($data['total_pages'] > 1): ?>
+                <ul class="flex justify-center items-center -space-x-px h-10 text-base">
+                    <li>
+                        <?php
+                        $prevHref = ($data['current_page'] > 1) ? BASEURL . '/kategori/' . $data['kategori']['slug'] . '?page=' . ($data['current_page'] - 1) : '#';
+                        $prevDisabled = ($data['current_page'] <= 1) ? 'pointer-events-none opacity-50' : '';
+                        ?>
+                        <a href="<?= $prevHref; ?>" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 <?= $prevDisabled; ?>">
+                            <span class="sr-only">Previous</span>
+                            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
+                            </svg>
+                        </a>
+                    </li>
+
+                    <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
+                        <li>
+                            <?php
+                            $pageHref = BASEURL . '/kategori/' . $data['kategori']['slug'] . '?page=' . $i;
+                            $pageActive = ($i == $data['current_page'])
+                                ? 'z-10 text-blue-600 border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700'
+                                : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700';
+                            ?>
+                            <a href="<?= $pageHref; ?>" class="flex items-center justify-center px-4 h-10 leading-tight border <?= $pageActive; ?>">
+                                <?= $i; ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <li>
+                        <?php
+                        $nextHref = ($data['current_page'] < $data['total_pages']) ? BASEURL . '/kategori/' . $data['kategori']['slug'] . '?page=' . ($data['current_page'] + 1) : '#';
+                        $nextDisabled = ($data['current_page'] >= $data['total_pages']) ? 'pointer-events-none opacity-50' : '';
+                        ?>
+                        <a href="<?= $nextHref; ?>" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 <?= $nextDisabled; ?>">
+                            <span class="sr-only">Next</span>
+                            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            <?php endif; ?>
+        </nav>
+
     </main>
 </body>
