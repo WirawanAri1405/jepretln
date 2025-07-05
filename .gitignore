@@ -1,3 +1,5 @@
 node_modules/
-public/assets/produk/
-public/assets/kategori/
+public/assets/produk/*
+!public/assets/produk/.gitkeep
+public/assets/kategori/*
+!public/assets/kategori/.gitkeep
