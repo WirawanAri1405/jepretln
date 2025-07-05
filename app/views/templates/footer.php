@@ -1,66 +1,32 @@
-    <!-- Footer -->
-    <footer class="bg-[#3A3A3A] text-white text-sm py-10 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
-            <!-- Logo & Address -->
-            <div
-                class="flex flex-col items-center md:items-start md:flex-row md:space-x-6 flex-shrink-0 md:basis-1/3 min-w-[250px]">
-                <img src="<?=BASEURL?>/assets/image/Logo_Putih_Polos.png" alt="Logo" class="w-16 h-14 mb-4 md:mb-0" />
-                <div class="text-center md:text-left">
-                    <p class="leading-6">
-                        123 Market St. #22B<br />
-                        Charlottesville, California<br />
-                        44635
-                    </p>
-                    <p class="mt-4">(434) 546-4356</p>
-                    <p>contact@lift.agency</p>
-                </div>
+<footer class="bg-gray-800 text-white mt-16">
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <img src="<?= BASEURL; ?>../assets/logo/Logo_Putih_Nama.png" alt="Jepretin Logo Putih" class="h-12 mb-4">
+                <p class="text-gray-400">Platform penyewaan kamera terpercaya untuk segala kebutuhan fotografi dan videografi Anda.</p>
             </div>
-
-            <!-- Menu Links -->
-            <div
-                class="flex flex-col sm:flex-row justify-center sm:justify-around gap-8 flex-grow md:basis-2/3 min-w-[300px]">
-                <div>
-                    <h4 class="font-semibold mb-2 text-center sm:text-left">Menu</h4>
-                    <ul class="space-y-2">
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline">About</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline">Growers</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline">Merchants</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline">Partners</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline">Contact</a></p>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-2 text-center sm:text-left">Social</h4>
-                    <ul class="space-y-2">
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline ">Facebook</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline ">Github</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline ">LinkedIn</a></p>
-                        </li>
-                        <li>
-                            <p class="text-center sm:text-left"><a href="#" class="hover:underline ">Instagram</a></p>
-                        </li>
-                    </ul>
-                </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Halaman</h3>
+                <ul class="space-y-2">
+                    <li><a href="<?= BASEURL; ?>/Users/tentang_kami" class="text-gray-400 hover:text-white">Tentang Kami</a></li>
+                    <li><a href="<?= BASEURL; ?>/Users/Syarat_Dan_Ketentuan" class="text-gray-400 hover:text-white">Syarat & Ketentuan</a></li>
+                    <li><a href="<?= BASEURL; ?>/Users/kebijakan_privasi" class="text-gray-400 hover:text-white">Kebijakan Privasi</a></li>
+                    <li><a href="<?= BASEURL; ?>/Users/Kebijakan_pengembalian" class="text-gray-400 hover:text-white">Kebijakan Pengembalian & Denda</a></li>
+                     <li><a href="<?= BASEURL; ?>/Users/FaQ" class="text-gray-400 hover:text-white">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Hubungi Kami</h3>
+                <p class="text-gray-400">Jepretin HQ<br>Jl. Kenangan No. 123, Jakarta<br>Email: halo@jepretin.com</p>
             </div>
         </div>
-
-        <!-- Copyright -->
-        <div class="text-center text-gray-400 mt-8">
-            &copy; 2020 Lift Media. All rights reserved.
+        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500">
+            <p>&copy; 2025 Jepretin. Dibuat oleh Kelompok X.</p>
         </div>
-    </footer>
+    </div>
+</footer>
+
+<script src="<?= BASEURL;?>/js/users/main.js"></script>
+
+</body>
+</html>

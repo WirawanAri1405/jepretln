@@ -54,15 +54,14 @@
     </div>
 
     <!-- Navigation Links -->
-    <nav class="mt-4 max-w-7xl mx-auto flex flex-wrap justify-center gap-2 text-white text-sm font-semibold">
-        <a href="<?= BASEURL ?>/home/index" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Home</a>
-        <a href="<?= BASEURL ?>/kategori/dslr" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">DSLR</a>
-        <a href="<?= BASEURL ?>/kategori/mirrorless" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Mirrorless</a>
-        <a href="<?= BASEURL ?>/kategori/actioncam" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Action Cam</a>
-        <a href="<?= BASEURL ?>/kategori/lensa" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Lensa</a>
-        <a href="<?= BASEURL ?>/kategori/aksesoris" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Aksesoris</a>
-        <a href="<?= BASEURL ?>/kategori/laptop" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Laptop</a>
-        <a href="<?= BASEURL ?>/kategori/drone" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">Drone</a>
-        <a href="<?= BASEURL ?>/kategori/ledtv" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">LED TV</a>
-    </nav>
+<nav class="mt-4 max-w-7xl mx-auto flex flex-wrap justify-center gap-2 text-white text-sm font-semibold">
+    <?php if (!empty($data['kategori_nav'])): ?>
+        <?php foreach ($data['kategori_nav'] as $kategori): ?>
+            <a href="<?= BASEURL; ?>/kategori/<?= htmlspecialchars($kategori['slug']); ?>" class="transition hover:bg-white hover:text-[#6f5633] px-4 py-1 rounded-full">
+                <?= htmlspecialchars($kategori['name']); ?>
+            </a>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</nav>
+
 </header>

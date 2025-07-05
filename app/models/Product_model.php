@@ -99,7 +99,7 @@ class Product_model
                         LEFT JOIN categories c ON p.category_id = c.id
                         LEFT JOIN brands b ON p.brand_id = b.id
                         WHERE p.id = :id";
-                        
+
         $this->db->query($queryProduk);
         $this->db->bind('id', $id, PDO::PARAM_INT);
         $produk = $this->db->single();
@@ -116,17 +116,17 @@ class Product_model
                         ORDER BY is_primary DESC, id ASC";
         $this->db->query($queryImages);
         $this->db->bind('product_id', $id, PDO::PARAM_INT);
-        
+
         // Gabungkan hasil query gambar ke dalam array produk
         $produk['images'] = $this->db->resultSet();
-        
+
         return $produk;
     }
 
-    
+
 
     // Menggunakan satu versi 'tambahDataProduk' yang sudah diperbaiki
-   public function tambahProduk($data)
+    public function tambahProduk($data)
     {
         $this->db->beginTransaction();
         try {
@@ -136,9 +136,9 @@ class Product_model
                             (name, slug, description, specifications, stock_quantity, daily_rental_price, category_id, brand_id, status) 
                             VALUES 
                             (:name, :slug, :description, :specifications, :stock_quantity, :daily_rental_price, :category_id, :brand_id, 'available')";
-            
+
             $this->db->query($queryProduk);
-            
+
             // --- DAN DI PROSES BINDING INI ---
             $this->db->bind('name', $data['name']);
             $this->db->bind('slug', $data['slug']);
@@ -148,7 +148,7 @@ class Product_model
             $this->db->bind('daily_rental_price', $data['daily_rental_price']);
             $this->db->bind('category_id', $data['category_id']);
             $this->db->bind('brand_id', $data['brand_id']);
-            
+
             $this->db->execute();
 
             $productId = $this->db->lastInsertId();
@@ -160,7 +160,7 @@ class Product_model
             if (!empty($data['images']) && is_array($data['images'])) {
                 $queryGambar = "INSERT INTO product_images (product_id, image_path, is_primary) 
                                 VALUES (:product_id, :image_path, :is_primary)";
-                
+
                 foreach ($data['images'] as $index => $imageName) {
                     $this->db->query($queryGambar);
                     $this->db->bind('product_id', $productId);
@@ -172,15 +172,14 @@ class Product_model
 
             $this->db->commit();
             return 1;
-
         } catch (\Exception $e) {
             $this->db->rollBack();
             // Untuk debugging, Anda bisa melihat error pastinya di log PHP
-            error_log("Error di tambahDataProduk: " . $e->getMessage()); 
+            error_log("Error di tambahDataProduk: " . $e->getMessage());
             return 0;
         }
     }
-     public function getGambarByProdukId($id)
+    public function getGambarByProdukId($id)
     {
         $this->db->query("SELECT * FROM {$this->tabelGambar} WHERE product_id = :id");
         $this->db->bind('id', $id);
@@ -190,10 +189,10 @@ class Product_model
     /**
      * Menghapus data produk.
      */
-   public function hapusDataProduk($id)
+    public function hapusDataProduk($id)
     {
         $query = "DELETE FROM {$this->tabelProduk} WHERE id = :id";
-        
+
         $this->db->query($query);
         $this->db->bind('id', $id, PDO::PARAM_INT);
         $this->db->execute();
@@ -243,20 +242,22 @@ class Product_model
         $this->db->execute();
         return $this->db->rowCount();
     }
-    public function getGambarById($id) {
+    public function getGambarById($id)
+    {
         $this->db->query("SELECT * FROM product_images WHERE id = :id");
         $this->db->bind('id', $id);
         return $this->db->single();
     }
 
-    public function hapusGambarById($id) {
+    public function hapusGambarById($id)
+    {
         $this->db->query("DELETE FROM product_images WHERE id = :id");
         $this->db->bind('id', $id);
         $this->db->execute();
         return $this->db->rowCount();
     }
 
-     public function updateDataProduk($data)
+    public function updateDataProduk($data)
     {
         $this->db->beginTransaction();
         try {
@@ -271,7 +272,7 @@ class Product_model
                                 category_id = :category_id, 
                                 brand_id = :brand_id
                             WHERE id = :id";
-            
+
             $this->db->query($queryProduk);
             $this->db->bind('id', $data['id']);
             $this->db->bind('name', $data['name']);
@@ -303,14 +304,45 @@ class Product_model
                     $hasPrimary = true; // Set agar gambar berikutnya tidak menjadi utama
                 }
             }
-            
+
             $this->db->commit();
             return $this->db->rowCount();
-
         } catch (\Exception $e) {
             $this->db->rollBack();
             error_log("Error di updateDataProduk: " . $e->getMessage());
             return 0;
         }
+    }
+    public function getProdukBySlugWithImages($slug)
+    {
+        $queryProduk = "SELECT 
+                        p.id, p.name as product_name, p.slug, p.description, 
+                        p.specifications, p.stock_quantity, p.daily_rental_price,
+                        c.name as category_name, c.spec_template,
+                        b.name as brand_name,
+                        p.category_id, p.brand_id
+                    FROM " . $this->tabelProduk . " p 
+                    LEFT JOIN categories c ON p.category_id = c.id
+                    LEFT JOIN brands b ON p.brand_id = b.id
+                    WHERE p.slug = :slug";
+
+        $this->db->query($queryProduk);
+        $this->db->bind('slug', $slug);
+        $produk = $this->db->single();
+
+        if ($produk == false) {
+            return false;
+        }
+
+        $queryImages = "SELECT id, image_path, is_primary 
+                    FROM product_images 
+                    WHERE product_id = :product_id 
+                    ORDER BY is_primary DESC, id ASC";
+        $this->db->query($queryImages);
+        $this->db->bind('product_id', $produk['id']);
+
+        $produk['images'] = $this->db->resultSet();
+
+        return $produk;
     }
 }

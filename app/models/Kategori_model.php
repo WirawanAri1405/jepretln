@@ -93,14 +93,20 @@ class Kategori_model
         $this->db->execute();
         return $this->db->rowCount();
     }
-     public function hapusDataKategori($id)
+    public function hapusDataKategori($id)
     {
         $query = "DELETE FROM " . $this->table . " WHERE id = :id";
-        
+
         $this->db->query($query);
         $this->db->bind('id', $id, PDO::PARAM_INT);
         $this->db->execute();
 
         return $this->db->rowCount();
+    }
+    public function getCategoryBySlug($slug)
+    {
+        $this->db->query('SELECT * FROM ' . $this->table . ' WHERE slug = :slug');
+        $this->db->bind('slug', $slug);
+        return $this->db->single();
     }
 }
