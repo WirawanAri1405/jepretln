@@ -69,7 +69,7 @@ class Order_model
             $conditions[] = "(o.order_number LIKE :searchTerm OR u.name LIKE :searchTerm)";
             $bindings[':searchTerm'] = ['value' => "%$searchTerm%", 'type' => PDO::PARAM_STR];
         }
-        if (!empty($filters['status'])) {
+        if (isset($filters['status']) && $filters['status'] !== 'semua') {
             $conditions[] = "o.status = :status";
             $bindings[':status'] = ['value' => $filters['status'], 'type' => PDO::PARAM_STR];
         }
@@ -207,7 +207,6 @@ class Order_model
             $this->db->commit();
 
             return $orderId;
-            
         } catch (Exception $e) {
             // Jika terjadi error di salah satu query, batalkan semua perubahan
             $this->db->rollBack();
@@ -234,11 +233,21 @@ class Order_model
         // Jika ada hasilnya, kembalikan order_id, jika tidak, kembalikan false
         return $result ? $result['id'] : false;
     }
-    public function getOrdersByUserId($userId) {
-    $this->db->query(
-        "SELECT * FROM orders WHERE user_id = :user_id ORDER BY created_at DESC"
-    );
-    $this->db->bind('user_id', $userId);
-    return $this->db->resultSet();
-}
+    public function getOrdersByUserId($userId)
+    {
+        $this->db->query(
+            "SELECT * FROM orders WHERE user_id = :user_id ORDER BY created_at DESC"
+        );
+        $this->db->bind('user_id', $userId);
+        return $this->db->resultSet();
+    }
+    public function updateOrderStatus($orderId, $status)
+    {
+        $query = "UPDATE orders SET status = :status WHERE id = :id";
+        $this->db->query($query);
+        $this->db->bind('status', $status);
+        $this->db->bind('id', $orderId);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 }

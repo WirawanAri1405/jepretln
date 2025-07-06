@@ -1,14 +1,27 @@
 <?php
 
-class User_model {
-    private $table = 'users'; 
+class User_model
+{
+    private $table = 'users';
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new Database;
     }
+    public function getUserRole($userId)
+    {
+        $this->db->query(
+            "SELECT r.name FROM roles r
+         JOIN user_roles ur ON r.id = ur.role_id
+         WHERE ur.user_id = :user_id"
+        );
+        $this->db->bind('user_id', $userId);
+        return $this->db->single();
+    }
 
-    public function tambahUser($data) {
+    public function tambahUser($data)
+    {
         // Cek duplikasi email, bagian ini tetap sama
         $queryCheck = "SELECT id FROM " . $this->table . " WHERE email = :email";
         $this->db->query($queryCheck);
@@ -18,43 +31,51 @@ class User_model {
             return false; // Email sudah terdaftar
         }
 
-        // Hash password, bagian ini tetap sama
-        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+        $this->db->beginTransaction();
+        try {
+            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        // Query INSERT, bagian ini tetap sama
-        $query = "INSERT INTO " . $this->table . 
-                 " (name, email, password, phone_number, status, created_at, updated_at) 
+            // 1. Insert ke tabel 'users' (kode ini sudah benar)
+            $query = "INSERT INTO " . $this->table .
+                " (name, email, password, phone_number, status, created_at, updated_at) 
                   VALUES 
                   (:name, :email, :password, :phone_number, :status, :created_at, :updated_at)";
-        
-        $this->db->query($query);
-        $this->db->bind('name', $data['name']);
-        $this->db->bind('email', $data['email']);
-        $this->db->bind('password', $hashedPassword);
-        $this->db->bind('phone_number', $data['nomor']);
-        $this->db->bind('status', 'active');
-        $this->db->bind('created_at', date('Y-m-d H:i:s'));
-        $this->db->bind('updated_at', date('Y-m-d H:i:s'));
 
-        $this->db->execute();
+            $this->db->query($query);
+            $this->db->bind('name', $data['name']);
+            $this->db->bind('email', $data['email']);
+            $this->db->bind('password', $hashedPassword);
+            $this->db->bind('phone_number', $data['nomor']);
+            $this->db->bind('status', 'active');
+            $this->db->bind('created_at', date('Y-m-d H:i:s'));
+            $this->db->bind('updated_at', date('Y-m-d H:i:s'));
+            $this->db->execute();
 
-        // --- PERUBAHAN UTAMA DI SINI ---
-        // Cek apakah proses INSERT berhasil
-        if ($this->db->rowCount() > 0) {
-            // Jika berhasil, panggil method lain untuk mencari user berdasarkan email
-            $newUser = $this->getUserByEmail($data['email']);
-            // Lalu kembalikan ID dari user yang baru ditemukan itu
-            return $newUser['id'];
-        } else {
-            // Jika INSERT gagal
-            return false;
+            // Ambil ID dari user yang baru saja dibuat
+            $userId = $this->db->lastInsertId();
+
+            // 2. !!! TAMBAHAN KRUSIAL: Tetapkan peran 'customer' (asumsi role_id untuk customer adalah 2) !!!
+            $queryRole = "INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, 2)";
+            $this->db->query($queryRole);
+            $this->db->bind('user_id', $userId);
+            $this->db->execute();
+
+            // Jika semua berhasil, simpan
+            $this->db->commit();
+            return $this->db->rowCount();
+        } catch (Exception $e) {
+            // Jika ada error, batalkan semua
+            $this->db->rollBack();
+            error_log($e->getMessage()); // Catat error untuk debug
+            return 0;
         }
     }
 
     /**
      * Mengambil data satu user berdasarkan ID-nya.
      */
-    public function getUserById($id) {
+    public function getUserById($id)
+    {
         $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id = :id');
         $this->db->bind('id', $id);
         return $this->db->single();
@@ -64,13 +85,15 @@ class User_model {
      * Mengambil data satu user berdasarkan email-nya.
      * Method ini kita butuhkan untuk membantu tambahUser().
      */
-    public function getUserByEmail($email) {
+    public function getUserByEmail($email)
+    {
         $this->db->query('SELECT * FROM ' . $this->table . ' WHERE email = :email');
         $this->db->bind('email', $email);
         return $this->db->single();
     }
 
-    public function checkLogin($data) {
+    public function checkLogin($data)
+    {
         $email = $data['email'];
         $password = $data['password'];
 
@@ -86,10 +109,11 @@ class User_model {
         return false; // Gagal (email tidak ada atau password salah)
     }
 
-    public function updateUser($data, $file) {
+    public function updateUser($data, $file)
+    {
         // Logika untuk upload file gambar
         $namaFileGambar = $this->uploadProfilePicture($file);
-        
+
         // Jika upload gagal, jangan update nama file di database
         if ($namaFileGambar === false) {
             // Ambil nama gambar lama dari input hidden jika ada
@@ -104,9 +128,9 @@ class User_model {
                     address = :address,
                     profile_picture = :profile_picture -- kolom untuk gambar
                   WHERE id = :id";
-        
+
         $this->db->query($query);
-        
+
         // Bind data dari form
         $this->db->bind('name', $data['name']);
         $this->db->bind('email', $data['email']);
@@ -123,7 +147,8 @@ class User_model {
     /**
      * Helper function untuk menangani upload gambar profil
      */
-    public function uploadProfilePicture($file) {
+    public function uploadProfilePicture($file)
+    {
         // Cek apakah ada file yang diupload
         if (isset($file['profile_picture']) && $file['profile_picture']['error'] === 0) {
             $namaFile = $file['profile_picture']['name'];
@@ -154,7 +179,8 @@ class User_model {
         return false; // Tidak ada file yang diupload atau terjadi error
     }
 
-    public function updatePassword($id, $hashedPassword) {
+    public function updatePassword($id, $hashedPassword)
+    {
         $query = "UPDATE users SET password = :password, updated_at = :updated_at WHERE id = :id";
         $this->db->query($query);
         $this->db->bind('password', $hashedPassword);
