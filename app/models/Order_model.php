@@ -167,4 +167,78 @@ class Order_model
         $enum = explode("','", $matches[1]);
         return $enum;
     }
+    public function createOrder($data)
+    {
+        // Memulai transaksi
+        $this->db->beginTransaction();
+
+        try {
+            // 1. Simpan data ke tabel 'orders'
+            $queryOrder = "INSERT INTO orders (order_number, user_id, rental_start_date, rental_end_date, pickup_location_id, return_location_id, subtotal, total_amount, status) 
+                           VALUES (:order_number, :user_id, :rental_start_date, :rental_end_date, :pickup_location_id, :return_location_id, :subtotal, :total_amount, 'pending_payment')";
+
+            $this->db->query($queryOrder);
+            $this->db->bind('order_number', $data['order_number']);
+            $this->db->bind('user_id', $data['user_id']);
+            $this->db->bind('rental_start_date', $data['rental_start_date']);
+            $this->db->bind('rental_end_date', $data['rental_end_date']);
+            $this->db->bind('pickup_location_id', $data['pickup_location_id']);
+            $this->db->bind('return_location_id', $data['return_location_id']);
+            $this->db->bind('subtotal', $data['total_amount']); // Subtotal sama dengan total untuk saat ini
+            $this->db->bind('total_amount', $data['total_amount']);
+
+            $this->db->execute();
+
+            // Ambil ID dari pesanan yang baru saja dibuat
+            $orderId = $this->db->lastInsertId();
+
+            // 2. Simpan data ke tabel 'order_items'
+            $queryItem = "INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase)
+                          VALUES (:order_id, :product_id, 1, :price_at_purchase)";
+
+            $this->db->query($queryItem);
+            $this->db->bind('order_id', $orderId);
+            $this->db->bind('product_id', $data['product_id']);
+            $this->db->bind('price_at_purchase', $data['daily_rental_price']);
+
+            $this->db->execute();
+
+            // Jika semua query berhasil, konfirmasi transaksi
+            $this->db->commit();
+
+            return $orderId;
+            
+        } catch (Exception $e) {
+            // Jika terjadi error di salah satu query, batalkan semua perubahan
+            $this->db->rollBack();
+            // Optional: Catat error untuk debugging
+            error_log('Order creation failed: ' . $e->getMessage());
+            return false;
+        }
+    }
+    public function hasUserCompletedOrderForProduct($userId, $productId)
+    {
+        $this->db->query(
+            "SELECT o.id FROM orders o 
+         JOIN order_items oi ON o.id = oi.order_id 
+         WHERE o.user_id = :user_id 
+         AND oi.product_id = :product_id 
+         AND o.status = 'completed' 
+         LIMIT 1"
+        );
+        $this->db->bind('user_id', $userId);
+        $this->db->bind('product_id', $productId);
+
+        $result = $this->db->single();
+
+        // Jika ada hasilnya, kembalikan order_id, jika tidak, kembalikan false
+        return $result ? $result['id'] : false;
+    }
+    public function getOrdersByUserId($userId) {
+    $this->db->query(
+        "SELECT * FROM orders WHERE user_id = :user_id ORDER BY created_at DESC"
+    );
+    $this->db->bind('user_id', $userId);
+    return $this->db->resultSet();
+}
 }

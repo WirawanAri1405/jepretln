@@ -1,8 +1,10 @@
 <?php
 
-class Produk extends Controller {
+class Produk extends Controller
+{
 
-    public function detail($slug = '') {
+    public function detail($slug = '')
+    {
         if (empty($slug)) {
             header('Location: ' . BASEURL);
             exit;
@@ -10,6 +12,7 @@ class Produk extends Controller {
 
         $productModel = $this->model('Product_model');
         $kategoriModel = $this->model('Kategori_model');
+        $orderModel = $this->model('Order_model');
 
         $product = $productModel->getProdukBySlugWithImages($slug);
 
@@ -17,7 +20,15 @@ class Produk extends Controller {
             echo "Produk tidak ditemukan.";
             return;
         }
-        
+        $data['eligible_to_review'] = false;
+        if (isset($_SESSION['user_id'])) {
+            $completedOrderId = $orderModel->hasUserCompletedOrderForProduct($_SESSION['user_id'], $product['id']);
+            if ($completedOrderId) {
+                $data['eligible_to_review'] = true;
+                $data['completed_order_id'] = $completedOrderId;
+            }
+        }
+
         // Ambil ulasan untuk produk ini
         $reviewModel = $this->model('Review_model');
         $data['reviews'] = $reviewModel->getReviewsByProductId($product['id']);
@@ -30,8 +41,9 @@ class Produk extends Controller {
         $this->view('produk/detail', $data);
         $this->view('templates/footer');
     }
-    
-    public function ulasan() {
+
+    public function ulasan()
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['user_id'])) {
             $reviewModel = $this->model('Review_model');
             $_POST['user_id'] = $_SESSION['user_id']; // Tambahkan user_id dari sesi
