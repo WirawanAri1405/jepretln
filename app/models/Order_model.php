@@ -83,18 +83,22 @@ class Order_model
      */
     public function getOrderById($id)
     {
+
         $sql = "SELECT 
-                    o.*, 
-                    u.name as customer_name,
-                    u.email as customer_email,
-                    u.phone_number as customer_phone,
-                    pickup_loc.name as pickup_location_name,
-                    return_loc.name as return_location_name
-                FROM orders o
-                JOIN users u ON o.user_id = u.id
-                LEFT JOIN locations pickup_loc ON o.pickup_location_id = pickup_loc.id
-                LEFT JOIN locations return_loc ON o.return_location_id = return_loc.id
-                WHERE o.id = :id";
+                o.*, 
+                u.name as customer_name,
+                u.email as customer_email,
+                u.phone_number as customer_phone,
+                pickup_loc.name as pickup_location_name,
+                return_loc.name as return_location_name,
+                pay.payment_method 
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            LEFT JOIN locations pickup_loc ON o.pickup_location_id = pickup_loc.id
+            LEFT JOIN locations return_loc ON o.return_location_id = return_loc.id
+            LEFT JOIN payments pay ON o.id = pay.order_id 
+            WHERE o.id = :id";
+
 
         $this->db->query($sql);
         $this->db->bind(':id', $id, PDO::PARAM_INT);
@@ -200,6 +204,16 @@ class Order_model
             $this->db->bind('order_id', $orderId);
             $this->db->bind('product_id', $data['product_id']);
             $this->db->bind('price_at_purchase', $data['daily_rental_price']);
+
+            $this->db->execute();
+            $queryPayment = "INSERT INTO payments (order_id, amount, payment_method, status)
+                         VALUES (:order_id, :amount, :payment_method, :status)";
+
+            $this->db->query($queryPayment);
+            $this->db->bind('order_id', $orderId);
+            $this->db->bind('amount', $data['total_amount']);
+            $this->db->bind('payment_method', 'Belum Dipilih'); // Metode pembayaran awal
+            $this->db->bind('status', 'pending'); // Status pembayaran awal
 
             $this->db->execute();
 
