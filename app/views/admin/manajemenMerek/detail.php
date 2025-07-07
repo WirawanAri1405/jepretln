@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <a href="<?= BASEURL; ?>/Admin/ManajemenMerek" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500">
+                    <a href="<?= BASEURL; ?>/Admin/ManajemenMerek" class="text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 py-2 px-4 rounded-lg">
                         ← Kembali
                     </a>
                 </div>
