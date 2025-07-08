@@ -32,7 +32,7 @@ class Login extends Controller
                 $_SESSION['role'] = $role ? $role['name'] : null; // Simpan nama peran, misal: 'customer'
 
                 // Arahkan ke controller Profile
-                header('Location: ' . BASEURL . '/Users/profile');
+                header('Location: ' . BASEURL . '/home');
                 exit;
             } else {
                 Flasher::setFlash('Gagal', 'Email atau Password salah.', 'danger');
@@ -49,7 +49,7 @@ class Login extends Controller
     {
         session_unset();
         session_destroy();
-        header('Location: ' . BASEURL . '/users/login');
+        header('Location: ' . BASEURL . '/home');
         exit;
     }
 }
