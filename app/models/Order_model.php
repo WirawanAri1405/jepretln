@@ -2,7 +2,6 @@
 
 class Order_model
 {
-    private $table = 'orders';
     private $db;
 
     public function __construct()
@@ -11,63 +10,43 @@ class Order_model
     }
 
     /**
-     * Helper untuk membangun klausa WHERE secara dinamis.
-     */
-    private function buildWhereClause($searchTerm, $filters, &$bindings)
-    {
-        $conditions = [];
-        if (!empty($searchTerm)) {
-            $conditions[] = "(users.name LIKE :searchTerm OR orders.order_number LIKE :searchTerm)";
-            $bindings['searchTerm'] = ['value' => "%$searchTerm%", 'type' => PDO::PARAM_STR];
-        }
-
-        if (!empty($filters['status'])) {
-            $conditions[] = "orders.status = :status";
-            $bindings['status'] = ['value' => $filters['status'], 'type' => PDO::PARAM_STR];
-        }
-
-        return empty($conditions) ? "" : " WHERE " . implode(' AND ', $conditions);
-    }
-
-    /**
-     * Mengambil semua pesanan dengan filter dan paginasi.
+     * Mengambil semua pesanan dengan join ke tabel user untuk nama pelanggan.
+     * Mendukung filter berdasarkan status dan pencarian.
      */
     public function getAllOrders($searchTerm = null, $filters = [], $limit = 10, $offset = 0)
     {
         $bindings = [];
         $sql = "SELECT 
-                    orders.id,
-                    orders.order_number,
-                    users.name as customer_name,
-                    orders.rental_start_date,
-                    orders.rental_end_date,
-                    orders.total_amount,
-                    orders.status,
-                    orders.created_at
-                FROM " . $this->table . "
-                LEFT JOIN users ON orders.user_id = users.id";
+                    o.id, o.order_number, o.rental_start_date, o.rental_end_date, o.total_amount, o.status, o.created_at,
+                    u.name as customer_name
+                FROM orders o
+                JOIN users u ON o.user_id = u.id";
 
         $whereClause = $this->buildWhereClause($searchTerm, $filters, $bindings);
         $sql .= $whereClause;
-        $sql .= " ORDER BY orders.created_at DESC LIMIT $limit OFFSET $offset";
+        $sql .= " ORDER BY o.id DESC LIMIT :limit OFFSET :offset";
 
         $this->db->query($sql);
+
+        // Binding dinamis
         foreach ($bindings as $key => $param) {
             $this->db->bind($key, $param['value'], $param['type']);
         }
+        $this->db->bind(':limit', $limit, PDO::PARAM_INT);
+        $this->db->bind(':offset', $offset, PDO::PARAM_INT);
 
         return $this->db->resultSet();
     }
 
     /**
-     * Menghitung total pesanan berdasarkan filter.
+     * Menghitung total pesanan untuk paginasi.
      */
     public function countAllOrders($searchTerm = null, $filters = [])
     {
         $bindings = [];
-        $sql = "SELECT COUNT(orders.id) as total 
-                FROM " . $this->table . "
-                LEFT JOIN users ON orders.user_id = users.id";
+        $sql = "SELECT COUNT(o.id) as total
+                FROM orders o
+                JOIN users u ON o.user_id = u.id";
 
         $whereClause = $this->buildWhereClause($searchTerm, $filters, $bindings);
         $sql .= $whereClause;
@@ -80,7 +59,24 @@ class Order_model
         return $this->db->single()['total'];
     }
 
+    /**
+     * Helper untuk membangun klausa WHERE secara dinamis.
+     */
+    private function buildWhereClause($searchTerm, $filters, &$bindings)
+    {
+        $conditions = [];
+        if (!empty($searchTerm)) {
+            $conditions[] = "(o.order_number LIKE :searchTerm OR u.name LIKE :searchTerm)";
+            $bindings[':searchTerm'] = ['value' => "%$searchTerm%", 'type' => PDO::PARAM_STR];
+        }
+        if (isset($filters['status']) && $filters['status'] !== 'semua') {
+            $conditions[] = "o.status = :status";
+            $bindings[':status'] = ['value' => $filters['status'], 'type' => PDO::PARAM_STR];
+        }
+        // Tambahkan filter lain di sini jika perlu
 
+        return empty($conditions) ? "" : " WHERE " . implode(' AND ', $conditions);
+    }
 
     /**
      * Mengambil detail lengkap satu pesanan berdasarkan ID.
@@ -126,6 +122,38 @@ class Order_model
         return $this->db->resultSet();
     }
 
+    /**
+     * Mengupdate data pesanan.
+     */
+    public function updateOrder($data)
+    {
+        $query = "UPDATE orders SET 
+                    status = :status,
+                    rental_start_date = :rental_start_date,
+                    rental_end_date = :rental_end_date,
+                    subtotal = :subtotal,
+                    discount_amount = :discount_amount,
+                    insurance_fee = :insurance_fee,
+                    deposit_amount = :deposit_amount,
+                    total_amount = :total_amount,
+                    internal_notes = :internal_notes
+                  WHERE id = :id";
+
+        $this->db->query($query);
+        $this->db->bind(':id', $data['id'], PDO::PARAM_INT);
+        $this->db->bind(':status', $data['status']);
+        $this->db->bind(':rental_start_date', $data['rental_start_date']);
+        $this->db->bind(':rental_end_date', $data['rental_end_date']);
+        $this->db->bind(':subtotal', $data['subtotal']);
+        $this->db->bind(':discount_amount', $data['discount_amount']);
+        $this->db->bind(':insurance_fee', $data['insurance_fee']);
+        $this->db->bind(':deposit_amount', $data['deposit_amount']);
+        $this->db->bind(':total_amount', $data['total_amount']);
+        $this->db->bind(':internal_notes', $data['internal_notes']);
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 
     // Fungsi lain seperti get all users, locations, dll jika diperlukan untuk form
     public function getAllSimple($tableName)
