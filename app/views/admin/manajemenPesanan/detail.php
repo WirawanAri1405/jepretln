@@ -173,5 +173,10 @@
                 </div>
             </div>
         </div>
-    </section>
+        <div class="mt-6 text-center">
+             <a href="<?= BASEURL; ?>/Admin/ManajemenPesanan" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm">
+                ← Kembali ke Daftar Pesanan
+            </a>
+        </div>
+    </div>
 </main>

@@ -78,7 +78,7 @@
                             <?php
                             $prevPageParams = $queryParams;
                             $prevPageParams['page'] = $data['current_page'] - 1;
-                            // URL disesuaikan ke ManajemenKategori
+                            
                             $prevHref = ($data['current_page'] > 1) ? BASEURL . '/Admin/ManajemenMerek?' . http_build_query($prevPageParams) : '#';
                             ?>
                             <a href="<?= $prevHref ?>"
@@ -95,8 +95,8 @@
                                 <?php
                                 $pageParams = $queryParams;
                                 $pageParams['page'] = $i;
-                                // URL disesuaikan ke ManajemenKategori
-                                $pageHref = BASEURL . '/Admin/ManajemenKategori?' . http_build_query($pageParams);
+                               
+                                $pageHref = BASEURL . '/Admin/ManajemenMerek?' . http_build_query($pageParams);
                                 ?>
                                 <a href="<?= $pageHref ?>"
                                     class="flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:border-gray-700 <?= ($i == $data['current_page']) ? 'z-10 text-blue-600 dark:text-white' : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
@@ -109,8 +109,8 @@
                             <?php
                             $nextPageParams = $queryParams;
                             $nextPageParams['page'] = $data['current_page'] + 1;
-                            // URL disesuaikan ke ManajemenKategori
-                            $nextHref = ($data['current_page'] < $data['total_pages']) ? BASEURL . '/Admin/ManajemenKategori?' . http_build_query($nextPageParams) : '#';
+                            
+                            $nextHref = ($data['current_page'] < $data['total_pages']) ? BASEURL . '/Admin/ManajemenMerek?' . http_build_query($nextPageParams) : '#';
                             ?>
                             <a href="<?= $nextHref ?>"
                                 class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] >= $data['total_pages']) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">

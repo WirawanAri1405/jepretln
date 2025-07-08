@@ -1,8 +1,10 @@
 <?php
 
-class Profile extends Controller {
+class Profile extends Controller
+{
 
-    public function index() {
+    public function index()
+    {
         // Keamanan: Cek apakah pengguna sudah login
         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             Flasher::setFlash('gagal', 'Anda harus login untuk mengakses halaman ini.', 'danger');
@@ -12,18 +14,19 @@ class Profile extends Controller {
 
         // Ambil data pengguna dari model berdasarkan ID di sesi
         $data['user'] = $this->model('User_model')->getUserById($_SESSION['user_id']);
-        
+
         if (!$data['user']) {
             // Jika data tidak ditemukan, paksa logout
             header('Location: ' . BASEURL . '/users/login/logout');
             exit;
         }
-        
+
         $data['judul'] = 'Profil Pengguna';
-        $this->view('users/profile/ProfileUser', $data); 
+        $this->view('users/profile/ProfileUser', $data);
     }
 
-    public function edit() {
+    public function edit()
+    {
         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             Flasher::setFlash('gagal', 'Anda harus login untuk mengakses halaman ini.', 'danger');
             header('Location: ' . BASEURL . '/users/login');
@@ -35,10 +38,11 @@ class Profile extends Controller {
         $data['judul'] = 'Edit Profil';
 
         // Tampilkan view form edit profil
-        $this->view('users/profile/EditProfile', $data); 
+        $this->view('users/profile/EditProfile', $data);
     }
 
-    public function update() {
+    public function update()
+    {
         // Cek apakah ada request POST
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Panggil method di model untuk update data, dan cek hasilnya
@@ -58,5 +62,28 @@ class Profile extends Controller {
             header('Location: ' . BASEURL . '/users/profile');
             exit;
         }
+    }
+    public function orders()
+    {
+        // Keamanan: Cek apakah pengguna sudah login
+        if (!isset($_SESSION['user_id'])) {
+            Flasher::setFlash('Gagal', 'Anda harus login untuk melihat riwayat pesanan.', 'danger');
+            header('Location: ' . BASEURL . '/users/login');
+            exit;
+        }
+
+        // Memuat model yang diperlukan
+        $orderModel = $this->model('Order_model');
+        $kategoriModel = $this->model('Kategori_model');
+
+        // Ambil semua pesanan untuk user yang sedang login
+        $data['orders'] = $orderModel->getOrdersByUserId($_SESSION['user_id']);
+
+        $data['judul'] = 'Riwayat Pesanan';
+        $data['kategori_nav'] = $kategoriModel->getAllKategori(null, 100, 0); // Untuk navigasi header
+
+        $this->view('templates/header', $data);
+        $this->view('users/profile/orders', $data); // View baru untuk riwayat pesanan
+        $this->view('templates/footer');
     }
 }

@@ -13,7 +13,7 @@
                 <?php if (isset($data['search_action'])): ?>
                     <div class="relative flex-1 max-w-md ml-4">
                         <form action="<?= $data['search_action']; ?>" method="GET">
-                            <input type="text" name="search"  placeholder="<?= $data['search_placeholder'] ?? 'Cari...'; ?>"
+                            <input type="text" name="search" placeholder="<?= $data['search_placeholder'] ?? 'Cari...'; ?>"
                                 class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 value="<?= htmlspecialchars($data['search_term'] ?? '') ?>" />
 
@@ -26,10 +26,19 @@
                     </form>
                 <?php endif; ?>
                 <div class="flex items-center gap-4">
-                     <span class="text-gray-700 dark:text-gray-200">
-                <?php //mendisplay user name admin mengunakan htmlspecialchars untuk keamanan ?>
-                    Hello, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?>
-                </span>
-                    <img src="" alt="User Avatar" class="rounded-full w-8 h-8">
+                    <span class="text-gray-700 dark:text-gray-200">
+                        <?php //mendisplay user name admin mengunakan htmlspecialchars untuk keamanan 
+                        ?>
+                        Hello, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?>
+                    </span>
+                    <?php
+                    // Logika untuk menampilkan foto profil (tetap sama)
+                    $profilePicture = $_SESSION['profile_picture'] ?? '';
+                    $userName = $_SESSION['user_name'] ?? 'User';
+                    $fotoUrl = $profilePicture
+                        ? BASEURL . '/assets/profile/' . $profilePicture
+                        : 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=A67C52&color=fff&size=64&bold=true';
+                    ?>
+                    <img src="<?= $fotoUrl ?>" alt="Foto Profil" class="w-8 h-8 rounded-full" />
                 </div>
             </header>

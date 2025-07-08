@@ -5,105 +5,134 @@ class ManajemenPesanan extends Controller
     public function index()
     {
         $data['judul'] = 'Manajemen Pesanan';
-        $order_model = $this->model('Order_model');
+        $orderModel = $this->model('Order_model');
 
-        // Mengambil parameter dari URL
-        $search_term = $_GET['search'] ?? null;
+        // Mengambil parameter filter dan pencarian dari URL
+        $searchTerm = $_GET['search'] ?? null;
         $filters = [
-            'status' => $_GET['status'] ?? null
+            'status' => $_GET['status'] ?? 'semua',
         ];
 
-        // Menyiapkan data untuk View (termasuk navbar dan form filter)
+        // Menyiapkan data untuk view (agar nilai filter dan pencarian tetap ada)
         $data['search_action'] = BASEURL . '/Admin/ManajemenPesanan';
-        $data['search_placeholder'] = 'Cari berdasarkan nama pelanggan atau nomor pesanan...';
-        $data['search_term'] = $search_term;
+        $data['search_placeholder'] = 'Cari No. Pesanan atau Nama Pelanggan...';
+        $data['search_term'] = $searchTerm;
         $data['active_filters'] = $filters;
-
-        // Mendapatkan semua kemungkinan status pesanan untuk filter
-        $data['order_statuses'] = ['pending_payment', 'paid', 'ready_for_pickup', 'rented', 'returned', 'completed', 'cancelled'];
+        $data['statuses'] = $orderModel->getPossibleStatuses(); // Mengambil daftar status dari model
 
         // Logika Paginasi
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $results_per_page = 10;
+        $results_per_page = 10; // Jumlah pesanan per halaman
         $offset = ($page - 1) * $results_per_page;
 
-        // Memanggil model untuk mendapatkan data pesanan
-        $total_results = $order_model->countAllOrders($search_term, $filters);
+        // Mengambil data pesanan dari model
+        $total_results = $orderModel->countAllOrders($searchTerm, $filters);
         $total_pages = ceil($total_results / $results_per_page);
-        $data['orders'] = $order_model->getAllOrders($search_term, $filters, $results_per_page, $offset);
+        $data['orders'] = $orderModel->getAllOrders($searchTerm, $filters, $results_per_page, $offset);
 
-        // Menyiapkan data paginasi untuk View
+        // Mengirim data paginasi ke view
         $data['current_page'] = $page;
         $data['total_pages'] = $total_pages;
         $data['total_results'] = $total_results;
         $data['showing_from'] = ($total_results > 0) ? $offset + 1 : 0;
         $data['showing_to'] = min($offset + $results_per_page, $total_results);
 
-        // Memuat semua View
+        // Memuat semua view yang diperlukan
         $this->view('admin/templates/header', $data);
         $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar', $data);
+        $this->view('admin/templates/navbar', $data); // Navbar membutuhkan data pencarian
         $this->view('admin/manajemenPesanan/index', $data);
+        $this->view('admin/manajemenPesanan/form_modal', $data);
         $this->view('admin/templates/footer');
     }
 
-    public function detail($id)
+
+    public function detail($id = 0)
     {
-        $data['judul'] = 'Detail Pesanan';
-        $order_model = $this->model('Order_model');
-
-        $order = $order_model->getOrderById($id);
-
-        if ($order === false) {
-            Flasher::setFlash('Pesanan', 'tidak ditemukan dengan ID ' . htmlspecialchars($id), 'danger');
+        if ($id == 0) {
             header('Location: ' . BASEURL . '/Admin/ManajemenPesanan');
             exit;
         }
 
-        $data['order'] = $order;
-        // Data status untuk dropdown di view detail
-        $data['order_statuses'] = ['pending_payment', 'paid', 'ready_for_pickup', 'rented', 'returned', 'completed', 'cancelled'];
+        $orderModel = $this->model('Order_model');
+        $data['order'] = $orderModel->getOrderById($id);
 
+        if (!$data['order']) {
+            Flasher::setFlash('Error', 'Pesanan tidak ditemukan.', 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenPesanan');
+            exit;
+        }
 
-        // Memuat view
+        $data['judul'] = 'Detail Pesanan ' . $data['order']['order_number'];
+        $data['items'] = $orderModel->getOrderItemsByOrderId($id); // Ambil item-item pesanan
+
         $this->view('admin/templates/header', $data);
         $this->view('admin/templates/sidebar');
-        $this->view('admin/templates/navbar', $data);
+        $this->view('admin/templates/navbar');
         $this->view('admin/manajemenPesanan/detail', $data);
         $this->view('admin/templates/footer');
     }
 
+    public function edit($id = 0)
+    {
+        if ($id == 0) {
+            header('Location: ' . BASEURL . '/Admin/ManajemenPesanan');
+            exit;
+        }
+
+        $orderModel = $this->model('Order_model');
+        $data['order'] = $orderModel->getOrderById($id);
+
+        if (!$data['order']) {
+            Flasher::setFlash('Error', 'Pesanan tidak ditemukan.', 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenPesanan');
+            exit;
+        }
+
+        $data['judul'] = 'Edit Pesanan ' . $data['order']['order_number'];
+        $data['statuses'] = $orderModel->getPossibleStatuses();
+        $data['locations'] = $this->model('Lokasi_model')->getAllLocation();
+
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenPesanan/edit', $data);
+        $this->view('admin/templates/footer');
+    }
+
+
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $order_model = $this->model('Order_model');
-
-            // Mengambil data dari form
-            $orderId = $_POST['order_id'];
-            $newStatus = $_POST['status'];
-            $internalNotes = $_POST['internal_notes'];
-
-            if ($order_model->updateOrderStatus($orderId, $newStatus, $internalNotes)) {
-                Flasher::setFlash('Status Pesanan', 'berhasil diperbarui', 'success');
-            } else {
-                Flasher::setFlash('Status Pesanan', 'gagal diperbarui', 'danger');
+            $orderModel = $this->model('Order_model');
+            // Cek apakah update berhasil atau tidak ada perubahan (>= 0)
+            if ($orderModel->updateOrder($_POST) >= 0) {
+                Flasher::setFlash('Pesanan', 'berhasil diperbarui.', 'success');
+                header('Location: ' . BASEURL . '/Admin/ManajemenPesanan/detail/' . $_POST['id']);
+                exit;
             }
         }
-        // Kembali ke halaman detail atau halaman list
-        header('Location: ' . BASEURL . '/Admin/ManajemenPesanan/detail/' . $orderId);
+        Flasher::setFlash('Gagal', 'Pesanan gagal diperbarui.', 'danger');
+        header('Location: ' . BASEURL . '/Admin/ManajemenPesanan');
         exit;
     }
-    public function hapus($id)
+        public function updateStatus()
     {
-        // Panggil model untuk menghapus data
-        if ($this->model('Order_model')->hapusDataPesanan($id) > 0) {
-            // Set flash message jika berhasil
-            Flasher::setFlash('Pesanan', 'berhasil dihapus', 'success');
-        } else {
-            // Set flash message jika gagal
-            Flasher::setFlash('Pesanan', 'gagal dihapus', 'danger');
+        // Pastikan ini adalah request POST dan data yang dibutuhkan ada
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($_POST['status'])) {
+            $orderModel = $this->model('Order_model');
+            
+            // Panggil method di model untuk update status
+            $success = $orderModel->updateOrderStatus($_POST['order_id'], $_POST['status']);
+            
+            if ($success) {
+                Flasher::setFlash('Status Pesanan', 'berhasil diperbarui.', 'success');
+            } else {
+                Flasher::setFlash('Gagal', 'Status pesanan gagal diperbarui atau tidak ada perubahan.', 'info');
+            }
         }
-        // Redirect kembali ke halaman utama manajemen pesanan
+        
+        // Arahkan kembali ke halaman daftar pesanan
         header('Location: ' . BASEURL . '/Admin/ManajemenPesanan');
         exit;
     }
