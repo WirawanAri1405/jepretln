@@ -4,7 +4,9 @@
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                     <div class="flex items-center space-x-3 w-full md:w-auto">
-                        <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown" class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100" type="button">
+                        <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown"
+                            class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                            type="button">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
                             </svg>
@@ -30,7 +32,7 @@
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">No. Pesanan</th>
                                 <th scope="col" class="px-4 py-3">Pelanggan</th>
@@ -48,16 +50,16 @@
                             <?php else: ?>
                                 <?php foreach ($data['orders'] as $order): ?>
                                     <tr class="border-b">
-                                        <td class="px-4 py-3 font-medium text-gray-900"><?= htmlspecialchars($order['order_number']); ?></td>
+                                        <td class="px-4 py-3 "><?= htmlspecialchars($order['order_number']); ?></td>
                                         <td class="px-4 py-3"><?= htmlspecialchars($order['customer_name']); ?></td>
                                         <td class="px-4 py-3"><?= date('d M Y', strtotime($order['rental_start_date'])); ?> - <?= date('d M Y', strtotime($order['rental_end_date'])); ?></td>
                                         <td class="px-4 py-3">Rp <?= number_format($order['total_amount'], 0, ',', '.'); ?></td>
                                         <td class="px-4 py-3"><span class="capitalize px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"><?= str_replace('_', ' ', $order['status']); ?></span></td>
                                         <td class="px-4 py-3">
                                             <div class="flex items-center space-x-2">
-                                                <form action="<?= BASEURL; ?>/Admin/ManajemenPesanan/updateStatus" method="POST" class="flex items-center space-x-2">
+                                                <form action="<?= BASEURL; ?>/Admin/ManajemenPesanan/updateStatus" method="POST" class="flex items-center space-x-2 ">
                                                     <input type="hidden" name="order_id" value="<?= $order['id']; ?>">
-                                                    <select name="status" class="text-xs rounded-lg border-gray-300 py-1">
+                                                    <select name="status" class="text-xs rounded-lg border-gray-300 py-1 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                                                         <?php foreach ($data['statuses'] as $status): ?>
                                                             <option value="<?= $status; ?>" <?= ($order['status'] == $status) ? 'selected' : ''; ?> class="capitalize">
                                                                 <?= str_replace('_', ' ', $status); ?>
