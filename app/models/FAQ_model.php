@@ -95,4 +95,23 @@ class FAQ_model
 
         return $this->db->rowCount();
     }
+    public function updateDataFAQ($data)
+    {
+        $query = "UPDATE " . $this->table . " SET 
+                    question = :question,
+                    answer = :answer,
+                    is_published = :is_published,
+                    sort_order = :sort_order
+                  WHERE id = :id";
+                  
+        $this->db->query($query);
+        $this->db->bind('id', $data['id']);
+        $this->db->bind('question', $data['question']);
+        $this->db->bind('answer', $data['answer']);
+        $this->db->bind('is_published', $data['is_published']);
+        $this->db->bind('sort_order', $data['sort_order']);
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 }
