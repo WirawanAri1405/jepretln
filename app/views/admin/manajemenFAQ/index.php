@@ -89,7 +89,9 @@
                                             <div id="faq-dropdown-<?= $faq['id']; ?>" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
                                                 <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="faq-dropdown-button-<?= $faq['id']; ?>">
                                                     <li><a href="<?= BASEURL; ?>/Admin/ManajemenFAQ/detail/<?= $faq['id']; ?>" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a></li>
-
+                                                    <li>
+                                                        <a href="<?= BASEURL; ?>/Admin/ManajemenFAQ/edit/<?= $faq['id']; ?>" class="block py-2 px-4 hover:bg-gray-100">Edit</a>
+                                                    </li>
                                                 </ul>
                                                 <div class="py-1">
                                                     <a href="<?= BASEURL; ?>/Admin/ManajemenFAQ/hapus/<?= $faq['id']; ?>" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>

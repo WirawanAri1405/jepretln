@@ -69,4 +69,32 @@ class ManajemenFAQ extends Controller{
         header('Location: ' . BASEURL . '/Admin/ManajemenFAQ');
         exit;
     }
+    public function edit($id)
+    {
+        $data['judul'] = 'Edit FAQ';
+        $data['faq'] = $this->model('FAQ_model')->getFAQById($id);
+        
+        if (!$data['faq']) {
+            Flasher::setFlash('FAQ', 'tidak ditemukan', 'danger');
+            header('Location: ' . BASEURL . '/Admin/ManajemenFAQ');
+            exit;
+        }
+
+        $this->view('admin/templates/header', $data);
+        $this->view('admin/templates/sidebar');
+        $this->view('admin/templates/navbar');
+        $this->view('admin/manajemenFAQ/edit', $data);
+        $this->view('admin/templates/footer');
+    }
+
+    public function update()
+    {
+        if ($this->model('FAQ_model')->updateDataFAQ($_POST) > 0) {
+            Flasher::setFlash('FAQ', 'berhasil diubah', 'success');
+        } else {
+            Flasher::setFlash('FAQ', 'tidak ada perubahan data', 'info');
+        }
+        header('Location: ' . BASEURL . '/Admin/ManajemenFAQ');
+        exit;
+    }
 }
