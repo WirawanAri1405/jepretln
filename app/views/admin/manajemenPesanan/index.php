@@ -77,72 +77,70 @@
                         </tbody>
                     </table>
                 </div>
+<nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
+    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        Showing
+        <span class="font-semibold text-gray-900 dark:text-white"><?= $data['showing_from'] ?>-<?= $data['showing_to'] ?></span>
+        of
+        <span class="font-semibold text-gray-900 dark:text-white"><?= $data['total_results'] ?></span>
+    </span>
 
-                <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
-                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                        Showing
-                        <span class="font-semibold text-gray-900 dark:text-white"><?= $data['showing_from'] ?>-<?= $data['showing_to'] ?></span>
-                        of
-                        <span class="font-semibold text-gray-900 dark:text-white"><?= $data['total_results'] ?></span>
-                    </span>
+    <?php
+        // Logika untuk membangun parameter URL agar filter & search tidak hilang
+        $queryParams = [];
+        if (!empty($data['status_aktif']) && $data['status_aktif'] !== 'Semua') {
+            $queryParams['statusFilter'] = $data['status_aktif'];
+        }
+        if (!empty($data['search_term'])) {
+            $queryParams['search'] = $data['search_term'];
+        }
+        
+        // Fungsi untuk membuat URL dengan parameter
+        function generatePageUrl($page, $queryParams) {
+            $pageParams = $queryParams;
+            $pageParams['page'] = $page;
+            return BASEURL . '/Admin/ManajemenPesanan?' . http_build_query($pageParams);
+        }
+    ?>
 
-                    <?php
-                    // Logika untuk membangun parameter URL agar search tidak hilang
-                    $queryParams = [];
-                    if (!empty($data['search_term'])) {
-                        $queryParams['search'] = $data['search_term'];
-                    }
-                    ?>
+    <ul class="inline-flex items-stretch -space-x-px">
+        <li>
+            <a href="<?= ($data['current_page'] > 1) ? generatePageUrl($data['current_page'] - 1, $queryParams) : '#' ?>"
+                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] <= 1) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
+                <span class="sr-only">Previous</span>
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            </a>
+        </li>
 
-                    <ul class="inline-flex items-stretch -space-x-px">
-                        <li>
-                            <?php
-                            $prevPageParams = $queryParams;
-                            $prevPageParams['page'] = $data['current_page'] - 1;
+        <?php
+            // --- LOGIKA PAGINASI BARU ---
+            $currentPage = $data['current_page'];
+            $totalPages = $data['total_pages'];
+            $window = 1; // Jumlah halaman di kiri dan kanan halaman aktif
 
-                            $prevHref = ($data['current_page'] > 1) ? BASEURL . '/Admin/ManajemenPesanan?' . http_build_query($prevPageParams) : '#';
-                            ?>
-                            <a href="<?= $prevHref ?>"
-                                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] <= 1) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
-                                <span class="sr-only">Previous</span>
-                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </li>
+            for ($i = 1; $i <= $totalPages; $i++) {
+                // Tampilkan halaman jika:
+                // 1. Ini adalah halaman pertama atau terakhir
+                // 2. Berada dalam "jendela" di sekitar halaman saat ini
+                if ($i == 1 || $i == $totalPages || ($i >= $currentPage - $window && $i <= $currentPage + $window)) {
+                    echo '<li><a href="' . generatePageUrl($i, $queryParams) . '" class="flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:border-gray-700 ' . ($i == $currentPage ? 'z-10 text-blue-600 dark:text-white' : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white') . '">' . $i . '</a></li>';
+                } 
+                // Tampilkan elipsis (...) jika ada jeda halaman
+                elseif ($i == $currentPage - $window - 1 || $i == $currentPage + $window + 1) {
+                    echo '<li><span class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">...</span></li>';
+                }
+            }
+        ?>
 
-                        <?php for ($i = 1; $i <= $data['total_pages']; $i++) : ?>
-                            <li>
-                                <?php
-                                $pageParams = $queryParams;
-                                $pageParams['page'] = $i;
-
-                                $pageHref = BASEURL . '/Admin/ManajemenPesanan?' . http_build_query($pageParams);
-                                ?>
-                                <a href="<?= $pageHref ?>"
-                                    class="flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:border-gray-700 <?= ($i == $data['current_page']) ? 'z-10 text-blue-600 dark:text-white' : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
-                                    <?= $i; ?>
-                                </a>
-                            </li>
-                        <?php endfor; ?>
-
-                        <li>
-                            <?php
-                            $nextPageParams = $queryParams;
-                            $nextPageParams['page'] = $data['current_page'] + 1;
-
-                            $nextHref = ($data['current_page'] < $data['total_pages']) ? BASEURL . '/Admin/ManajemenPesanan?' . http_build_query($nextPageParams) : '#';
-                            ?>
-                            <a href="<?= $nextHref ?>"
-                                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] >= $data['total_pages']) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
-                                <span class="sr-only">Next</span>
-                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+        <li>
+            <a href="<?= ($data['current_page'] < $data['total_pages']) ? generatePageUrl($data['current_page'] + 1, $queryParams) : '#' ?>"
+                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 <?= ($data['current_page'] >= $data['total_pages']) ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white' ?>">
+                <span class="sr-only">Next</span>
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+            </a>
+        </li>
+    </ul>
+</nav>
             </div>
         </div>
     </section>
